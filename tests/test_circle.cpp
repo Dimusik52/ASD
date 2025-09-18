@@ -10,8 +10,8 @@ TEST(TestCircleLib, is_outside) {
 }
 
 TEST(TestCircleLib, is_intersects) {
-  Circle c9 = Circle(1, 2, 5);
-  Circle c10 = Circle(9, 2, 4);
+  Circle c1 = Circle(1, 2, 5);
+  Circle c2 = Circle(9, 2, 4);
   EXPECT_EQ(calculate_pos(c9, c10), Position::INTERSECTS);
 }
 
@@ -25,13 +25,13 @@ TEST(TestCircleLib, is_equals) {
 }
 
 TEST(TestCircleLib, is_touch) {
-  Circle c5 = Circle(4, 7, 5);
-  Circle c6 = Circle(12, 7, 3);
+  Circle c1 = Circle(4, 7, 5);
+  Circle c2 = Circle(12, 7, 3);
   EXPECT_EQ(calculate_pos(c5, c6), Position::TOUCH);
 }
 
 TEST(TestCircleLib, is_inside) {
-  Circle c17 = Circle(3, 5, 10);
-  Circle c18 = Circle(4, 5, 2);
+  Circle c1 = Circle(3, 5, 10);
+  Circle c2 = Circle(4, 5, 2);
   EXPECT_EQ(calculate_pos(c17, c18), Position::INSIDE);
 }
