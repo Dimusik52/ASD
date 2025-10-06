@@ -1,3 +1,4 @@
+// Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
 #ifndef LIB_MATHVECTOR_MATHVECTORX_H_
 #define LIB_MATHVECTOR_MATHVECTORX_H_
