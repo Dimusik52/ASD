@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
-#define MATRIX
+#define ALGORITHMS
 #ifdef EASY_EXAMPLE
 
 #include <iostream>
@@ -240,3 +240,17 @@ void main() {
   }
 }
 #endif // MATRIX
+
+#ifdef ALGORITHMS
+
+#include <iostream>
+#include "../lib_algorithms/algorithms.h"
+
+
+void main() {
+  Matrix<int> matrix(3, 3);
+  std::cin >> matrix;
+  std::cout << matrix_get_local_min(matrix);
+}
+
+#endif
