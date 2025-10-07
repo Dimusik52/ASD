@@ -83,13 +83,14 @@ MathVector<T> mathvector_user_input() {
 
   std::cout << "Please enter the size of mathvector (m): ";
   std::cin >> m;
+  MathVector<T> vector(m);
   try {
-    MathVector<T> vector(m);
     std::cout << "Input vector: " << std::endl;
     std::cin >> vector;
     return vector;
   } catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
+    return vector;
   }
 }
 
@@ -130,7 +131,7 @@ void main() {
           matrix_1 = matrix_user_input<int>();
           matrix_2 = matrix_user_input<int>();
           matrix_3 = matrix_1 * matrix_2;
-          std::cout << "Answer:\n" << matrix_3;
+          std::cout << "Answer:\n" << matrix_3 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -142,7 +143,7 @@ void main() {
           matrix_1 = matrix_user_input<int>();
           mathvector_1 = mathvector_user_input<int>();
           mathvector_2 = matrix_1 * mathvector_1;
-          std::cout << "Answer:\n" << mathvector_2;
+          std::cout << "Answer:\n" << mathvector_2 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -154,7 +155,7 @@ void main() {
           matrix_1 = matrix_user_input<int>();
           mathvector_1 = mathvector_user_input<int>();
           mathvector_2 = mathvector_1 * matrix_1;
-          std::cout << "Answer:\n" << mathvector_2;
+          std::cout << "Answer:\n" << mathvector_2 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -166,7 +167,7 @@ void main() {
           mathvector_1 = mathvector_user_input<int>();
           mathvector_2 = mathvector_user_input<int>();
           int number = mathvector_1 * mathvector_2;
-          std::cout << "Answer:\n" << number;
+          std::cout << "Answer:\n" << number << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -178,7 +179,7 @@ void main() {
           matrix_1 = matrix_user_input<int>();
           matrix_2 = matrix_user_input<int>();
           matrix_3 = matrix_1 + matrix_2;
-          std::cout << "Answer:\n" << matrix_3;
+          std::cout << "Answer:\n" << matrix_3 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -190,7 +191,7 @@ void main() {
           matrix_1 = matrix_user_input<int>();
           matrix_2 = matrix_user_input<int>();
           matrix_3 = matrix_1 - matrix_2;
-          std::cout << "Answer:\n" << matrix_3;
+          std::cout << "Answer:\n" << matrix_3 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -202,7 +203,7 @@ void main() {
           tr_matrix_1 = trianglematrix_user_input<int>();
           tr_matrix_2 = trianglematrix_user_input<int>();
           tr_matrix_3 = tr_matrix_1 + tr_matrix_2;
-          std::cout << "Answer:\n" << tr_matrix_3;
+          std::cout << "Answer:\n" << tr_matrix_3 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -214,7 +215,7 @@ void main() {
           tr_matrix_1 = trianglematrix_user_input<int>();
           tr_matrix_2 = trianglematrix_user_input<int>();
           tr_matrix_3 = tr_matrix_1 - tr_matrix_2;
-          std::cout << "Answer:\n" << tr_matrix_3;
+          std::cout << "Answer:\n" << tr_matrix_3 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
@@ -226,7 +227,7 @@ void main() {
           tr_matrix_1 = trianglematrix_user_input<int>();
           tr_matrix_2 = trianglematrix_user_input<int>();
           tr_matrix_3 = tr_matrix_1 * tr_matrix_2;
-          std::cout << "Answer:\n" << tr_matrix_3;
+          std::cout << "Answer:\n" << tr_matrix_3 << std::endl;
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
