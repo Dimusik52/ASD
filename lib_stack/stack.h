@@ -29,7 +29,7 @@ class Stack {
 
 template <class T>
 Stack<T>::Stack() {
-  ;
+  _data.shrink_to_fit();
 }
 
 template <class T>
@@ -62,13 +62,13 @@ void Stack<T>::push(T val) {
 
 template <class T>
 void Stack<T>::pop() {
-  if (is_full()) throw std::logic_error("pop(): Stack is empty!");
+  if (is_full()) throw std::logic_error("pop(): Stack is full!");
   _data.pop_back();
 }
 
 template <class T>
 T Stack<T>::top() const {
-  if (is_empty()) throw...;
+  if (is_empty()) throw std::logic_error("top(): Stack is empty!");
   return _data.back();
 }
 
