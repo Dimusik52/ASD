@@ -4,7 +4,7 @@
 #define LIB_MATHVECTOR_MATHVECTORX_H_
 
 #include <iostream>
-#include "../lib_TVector/TVector.h"
+#include "../lib_TVector/include/TVector.h"
 
 template <typename T>
 class MathVector : public TVector<T> {
