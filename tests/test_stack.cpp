@@ -61,7 +61,7 @@ TEST(StackTest, PushFromEmpty) {
 TEST(StackTest, Push) {
   Stack<int> s(10);
   s.push(-12);
-  EXPECT_EQ(s.is_empty(), true);
+  EXPECT_EQ(s.is_empty(), false);
   EXPECT_EQ(s.is_full(), false);
   EXPECT_EQ(s.top(), -12);
 }
@@ -115,9 +115,9 @@ TEST(StackTest, IsEmpty) {
 
 TEST(StackTest, IsNotEmpty) {
   Stack<int> s({1, 4});
-  EXPECT_EQ(s.is_empty(), true);
+  EXPECT_EQ(s.is_empty(), false);
   s.pop();
-  EXPECT_EQ(s.is_empty(), true);
+  EXPECT_EQ(s.is_empty(), false);
   s.pop();
   EXPECT_EQ(s.is_empty(), true);
 }

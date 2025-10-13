@@ -62,7 +62,7 @@ void Stack<T>::push(T val) {
 
 template <class T>
 void Stack<T>::pop() {
-  if (is_full()) throw std::logic_error("pop(): Stack is full!");
+  if (is_empty()) throw std::logic_error("pop(): Stack is empty!");
   _data.pop_back();
 }
 
