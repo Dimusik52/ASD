@@ -101,7 +101,7 @@ inline bool Queue<T>::is_empty() const noexcept {
 
 template <class T>
 inline bool Queue<T>::is_full() const noexcept {
-  return _count >= _size;
+  return _count == _size;
 }
 
 template <class T>
