@@ -1,6 +1,7 @@
 // Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
 #ifndef _LIB_STACK_STACK_H_
+#define _LIB_STACK_STACK_H_
 
 #include <iostream>
 #include <initializer_list>
