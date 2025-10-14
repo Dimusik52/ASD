@@ -21,6 +21,7 @@ add_subdirectory(lib_TVector)
 add_subdirectory(lib_trianglematrix)
 add_subdirectory(lib_mathvector)
 add_subdirectory(lib_stack)
+add_subdirectory(lib_queue)
 add_subdirectory(lib_algorithms)
 
 
