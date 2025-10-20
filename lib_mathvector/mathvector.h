@@ -13,6 +13,7 @@ class MathVector : public TVector<T> {
   MathVector();
   explicit MathVector(size_t m);
   MathVector(const MathVector<T>&);
+  MathVector(std::initializer_list<T> init_list);
   MathVector(const TVector<T>&);
 
   ~MathVector();
@@ -58,6 +59,14 @@ MathVector<T>::MathVector(size_t m) {
 template <class T>
 MathVector<T>::MathVector(const MathVector<T>& other) : TVector<T>(other) {
 
+}
+
+template <typename T>
+MathVector<T>::MathVector(std::initializer_list<T> init_list) {
+  this->reserve(init_list.size());
+  for (const auto& element : init_list) {
+    this->push_back(element);
+  }
 }
 
 template <class T>

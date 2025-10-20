@@ -25,7 +25,8 @@ class TriangleMatrix : public Matrix<T> {
   TriangleMatrix();
   TriangleMatrix(size_t rows, size_t cols, bool is_upper = true);
   explicit TriangleMatrix(Matrix<T>& matrix, bool is_upper = true);
-  TriangleMatrix(std::initializer_list<T> init_list, bool is_upper = true);
+  TriangleMatrix(std::initializer_list<std::initializer_list<T>> init_list,
+                 bool is_upper = true);
   ~TriangleMatrix();
 
   bool is_upper() const { return _is_upper; }
@@ -72,7 +73,8 @@ TriangleMatrix<T>::TriangleMatrix(Matrix<T>& matrix, bool is_upper = true)
 }
 
 template <typename T>
-TriangleMatrix<T>::TriangleMatrix(std::initializer_list<T> init_list,
+TriangleMatrix<T>::TriangleMatrix(
+    std::initializer_list<std::initializer_list<T>> init_list,
                                   bool is_upper = true)
     : _is_upper(is_upper) {
   _rows = init_list.size();

@@ -4,6 +4,7 @@
 #define LIB_MATRIX_MATRIX_H_
 
 #include <iostream>
+#include <initializer_list>
 
 #include "../lib_mathvector/mathvector.h"
 
@@ -17,6 +18,7 @@ class Matrix : public MathVector<MathVector<T>> {
   Matrix();
   Matrix(size_t, size_t);
   Matrix(const MathVector<MathVector<T>>&);
+  Matrix(std::initializer_list<std::initializer_list<T>> init_list);
   Matrix(const Matrix&);
 
   ~Matrix();
@@ -117,6 +119,31 @@ Matrix<T>::Matrix(const MathVector<MathVector<T>>& vectors)
   } else {
     _rows = 0;
     _cols = 0;
+  }
+}
+
+template <typename T>
+Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> init_list) {
+  _rows = init_list.size();
+  _cols = (_rows > 0) ? init_list.begin()->size() : 0;
+
+  for (const auto& row : init_list) {
+    if (row.size() != _cols) {
+      throw std::invalid_argument(
+          "All rows must have the same size in initializer list");
+    }
+  }
+
+  this->resize(_rows);
+  size_t i = 0;
+  for (const auto& row_list : init_list) {
+    (*this)[i] = MathVector<T>(_cols);
+    size_t j = 0;
+    for (const auto& element : row_list) {
+      (*this)[i][j] = element;
+      j++;
+    }
+    i++;
   }
 }
 
