@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
-#define ALGORITHMS
+#define MATRIX
 #ifdef EASY_EXAMPLE
 
 #include <iostream>
@@ -99,23 +99,33 @@ Matrix<T> matrix_user_input() {
     return matrix;
   } catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
+    system("pause");
   }
 }
 
 template <typename T>
 TriangleMatrix<T> trianglematrix_user_input() {
   int m, n;
+  bool is_upper;
 
   std::cout << "Please enter the size of matrix (m n): ";
   std::cin >> m;
   std::cin >> n;
+
+  char input_char;
+  std::cout << "Please enter is this matrix upper? (y/n): ";
+  std::cin >> input_char;
+
+  is_upper = (input_char == 'y');
+
   try {
-    TriangleMatrix<T> tr_matrix(m, n);
+    TriangleMatrix<T> tr_matrix(m, n, is_upper);
     std::cout << "Input matrix: " << std::endl;
     std::cin >> tr_matrix;
     return tr_matrix;
   } catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
+    system("pause");
   }
 }
 
@@ -177,6 +187,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 2:
@@ -189,6 +200,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 3:
@@ -201,6 +213,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 4:
@@ -213,6 +226,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 5:
@@ -225,6 +239,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 6:
@@ -237,6 +252,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 7:
@@ -249,6 +265,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 8:
@@ -261,6 +278,7 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       case 9:
@@ -273,10 +291,12 @@ void main() {
           system("pause");
         } catch (const std::exception& e) {
           std::cout << e.what() << std::endl;
+          system("pause");
         }
         break;
       default:
         std::cout << "Wrong Input. Try again!" << std::endl;
+        system("pause");
         break;
     }
   }
