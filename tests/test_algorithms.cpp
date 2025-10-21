@@ -114,7 +114,7 @@ TEST(CheckBracketsTest, WrongOrderBrackets) {
   EXPECT_FALSE(check_brackets(")("));
   EXPECT_FALSE(check_brackets("}{"));
   EXPECT_FALSE(check_brackets("]["));
-  EXPECT_FALSE(check_brackets("([)]"));  // Неправильная вложенность
+  EXPECT_FALSE(check_brackets("([)]"));
   EXPECT_FALSE(check_brackets("{(})"));
 }
 
