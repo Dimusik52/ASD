@@ -59,3 +59,102 @@ TEST(MatrixLocalMin, MultipleMins) {
   int result = matrix_get_local_min(matrix);
   EXPECT_TRUE(result == 1 || result == 6);
 }
+
+TEST(CheckBracketsTest, EmptyString) { EXPECT_TRUE(check_brackets("")); }
+
+TEST(CheckBracketsTest, SingleOpeningBracket) {
+  EXPECT_FALSE(check_brackets("("));
+  EXPECT_FALSE(check_brackets("{"));
+  EXPECT_FALSE(check_brackets("["));
+}
+
+TEST(CheckBracketsTest, SingleClosingBracket) {
+  EXPECT_FALSE(check_brackets(")"));
+  EXPECT_FALSE(check_brackets("}"));
+  EXPECT_FALSE(check_brackets("]"));
+}
+
+TEST(CheckBracketsTest, SimpleBalancedBrackets) {
+  EXPECT_TRUE(check_brackets("()"));
+  EXPECT_TRUE(check_brackets("{}"));
+  EXPECT_TRUE(check_brackets("[]"));
+}
+
+TEST(CheckBracketsTest, MixedBalancedBrackets) {
+  EXPECT_TRUE(check_brackets("()[]{}"));
+  EXPECT_TRUE(check_brackets("({[]})"));
+  EXPECT_TRUE(check_brackets("[{()}]"));
+}
+
+TEST(CheckBracketsTest, NestedBalancedBrackets) {
+  EXPECT_TRUE(check_brackets("({[]})"));
+  EXPECT_TRUE(check_brackets("[({})]"));
+  EXPECT_TRUE(check_brackets("{([])}"));
+}
+
+TEST(CheckBracketsTest, SequentialBalancedBrackets) {
+  EXPECT_TRUE(check_brackets("(){}[]"));
+  EXPECT_TRUE(check_brackets("([]){}"));
+  EXPECT_TRUE(check_brackets("{()}[{}]"));
+}
+
+TEST(CheckBracketsTest, UnbalancedMoreOpening) {
+  EXPECT_FALSE(check_brackets("({"));
+  EXPECT_FALSE(check_brackets("[{("));
+  EXPECT_FALSE(check_brackets("({["));
+}
+
+TEST(CheckBracketsTest, UnbalancedMoreClosing) {
+  EXPECT_FALSE(check_brackets(")}"));
+  EXPECT_FALSE(check_brackets("])}"));
+  EXPECT_FALSE(check_brackets("())"));
+}
+
+TEST(CheckBracketsTest, WrongOrderBrackets) {
+  EXPECT_FALSE(check_brackets(")("));
+  EXPECT_FALSE(check_brackets("}{"));
+  EXPECT_FALSE(check_brackets("]["));
+  EXPECT_FALSE(check_brackets("([)]"));  // Неправильная вложенность
+  EXPECT_FALSE(check_brackets("{(})"));
+}
+
+TEST(CheckBracketsTest, MixedWrongOrder) {
+  EXPECT_FALSE(check_brackets("(]"));
+  EXPECT_FALSE(check_brackets("[}"));
+  EXPECT_FALSE(check_brackets("{)"));
+  EXPECT_FALSE(check_brackets("([)]"));
+  EXPECT_FALSE(check_brackets("{[}]"));
+}
+
+TEST(CheckBracketsTest, StringWithOtherCharacters) {
+  EXPECT_TRUE(check_brackets("(abc)"));
+  EXPECT_TRUE(check_brackets("a{b[c]d}e"));
+  EXPECT_TRUE(check_brackets("hello (world) {test} [array]"));
+
+  EXPECT_FALSE(check_brackets("(abc"));
+  EXPECT_FALSE(check_brackets("abc]"));
+  EXPECT_FALSE(check_brackets("a{b(c)d"));
+}
+
+TEST(CheckBracketsTest, EdgeCases) {
+  EXPECT_TRUE(check_brackets("()"));
+  EXPECT_TRUE(check_brackets("{}"));
+  EXPECT_TRUE(check_brackets("[]"));
+  EXPECT_FALSE(check_brackets("(}"));
+  EXPECT_FALSE(check_brackets("[)"));
+  EXPECT_FALSE(check_brackets("{)"));
+}
+
+TEST(CheckBracketsTest, OnlyOneTypeOfBracket) {
+  EXPECT_TRUE(check_brackets("((()))"));
+  EXPECT_TRUE(check_brackets("{{{}}}"));
+  EXPECT_TRUE(check_brackets("[[[]]]"));
+
+  EXPECT_FALSE(check_brackets("((())"));
+  EXPECT_FALSE(check_brackets("{{}}}"));
+  EXPECT_FALSE(check_brackets("[[[]]"));
+}
+
+TEST(CheckBracketsTest, RealExamples) {
+  EXPECT_TRUE(check_brackets("f(x) = [(x + 1) * {x - 2}]"));
+}

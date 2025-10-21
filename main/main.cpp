@@ -293,6 +293,9 @@ void main() {
   Matrix<int> matrix(3, 3);
   std::cin >> matrix;
   std::cout << matrix_get_local_min(matrix);
+
+  std::string str = "() ())";
+  std::cout << check_brackets(str);
 }
 
 #endif

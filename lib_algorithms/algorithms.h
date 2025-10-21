@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include "../lib_matrix/matrix.h"
+#include "../lib_stack/stack.h"
 
 template <typename T>
 int matrix_get_local_min(Matrix<T> matrix) {
@@ -60,4 +61,27 @@ int matrix_get_local_min(Matrix<T> matrix) {
   return result;
 }
 
-#endif
+bool check_brackets(std::string str) {
+  Stack<char> brackets(str.size());
+  for (const auto& c : str) {
+    if (c == '(' || c == '[' || c == '{') {
+      brackets.push(c);
+    } else if (c == ')' || c == ']' || c == '}') {
+      if (brackets.is_empty()) {
+        return false;
+      }
+      char top = brackets.top();
+      if ((c == ')' && top != '(') || (c == ']' && top != '[') ||
+          (c == '}' && top != '{')) {
+        return false;
+      }
+      brackets.pop();
+    }
+  }
+  if (brackets.is_empty()) {
+    return true;
+  }
+  return false;
+}
+
+#endif  // LIB_ALGORITHMS_ALGORITHMS_H_
