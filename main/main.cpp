@@ -310,9 +310,18 @@ void main() {
 
 
 void main() {
-  Matrix<int> matrix(3, 3);
-  std::cin >> matrix;
-  std::cout << matrix_get_local_min(matrix);
+  //Matrix<int> matrix(3, 3);
+  //std::cin >> matrix;
+  //std::cout << matrix_get_local_min(matrix);
+
+  //std::string str = "() ())";
+  //std::cout << check_brackets(str);
+  try {
+    read_expression("1+2*(1x*(x+y))");
+  } catch (std::exception& e) {
+    std::cerr << e.what();
+  }
+ 
 }
 
 #endif
