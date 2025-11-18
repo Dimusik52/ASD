@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../lib_matrix/matrix.h"
 #include "../lib_stack/stack.h"
+#include "../lib_list/list.h"
 
 template <typename T>
 int matrix_get_local_min(Matrix<T> matrix) {
@@ -156,6 +157,58 @@ void read_expression(std::string expression) {
     }
     previous_char = c;
   }
+}
+
+template <class T>
+bool is_looped(List<T>& list) {
+  auto slow = list.begin();
+  auto fast = list.begin();
+
+  if (slow == list.end()) return false;
+
+  if (slow.get_node()->next == slow.get_node()) {
+    return true;
+  }
+
+  while (true) {
+    ++slow;
+    if (slow == list.end()) return false;
+
+    ++fast;
+    if (fast == list.end()) return false;
+
+    ++fast;
+    if (fast == list.end()) return false;
+
+    if (slow == fast) return true;
+  }
+}
+
+template <class T>
+bool is_looped_reverse(List<T>& list) {
+  if (list.begin() == list.end()) return false;
+
+  auto current = list.begin();
+  auto prev = list.begin();
+  auto next = list.begin();
+  ++next;
+
+  auto head = list.begin();
+  
+  while (current != list.end()) {
+    auto temp = current;
+    ++temp;
+
+    current.get_node()->next = prev.get_node();
+
+    prev = current;
+    current = temp;
+
+    if (current == head) {
+      return true;
+    }
+  }
+  return false;
 }
 
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_

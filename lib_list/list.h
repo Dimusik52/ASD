@@ -35,6 +35,8 @@ class List {
     Iterator() : _current(nullptr){};
     Iterator(Node* node) : _current(node){};
 
+    Node* get_node() { return _current; }
+
     Iterator& operator=(const Iterator& other) noexcept {
       _current = other._current;
       return *this;

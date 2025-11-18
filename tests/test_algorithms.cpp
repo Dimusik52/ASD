@@ -158,3 +158,48 @@ TEST(CheckBracketsTest, OnlyOneTypeOfBracket) {
 TEST(CheckBracketsTest, RealExamples) {
   EXPECT_TRUE(check_brackets("f(x) = [(x + 1) * {x - 2}]"));
 }
+
+TEST(CheckLoopsTest, TurtleRabbitNoLoop) { 
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+  EXPECT_FALSE(is_looped(list));
+}
+
+TEST(CheckLoopsTest, TurtleRabbitLoop) { 
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+  list.push_back(4);
+  
+  auto last = list.begin();
+  auto temp = list.begin();
+  while (++temp != list.end()) {
+    ++last;
+  }
+
+  auto second = list.begin();
+  ++second;
+
+  auto original_next = last.get_node()->next;
+
+  last.get_node()->next =
+      second.get_node();
+  
+  EXPECT_TRUE(is_looped(list));
+  last.get_node()->next = original_next;
+}
+
+TEST(CheckLoopsTest, TurtleRabbitLoopSingle) {
+  List<int> list;
+  list.push_back(1);
+
+  auto only = list.begin();
+  only.get_node()->next = only.get_node();
+
+  EXPECT_TRUE(is_looped(list));
+
+  only.get_node()->next = nullptr;
+}
