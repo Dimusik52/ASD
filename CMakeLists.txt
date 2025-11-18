@@ -23,6 +23,7 @@ add_subdirectory(lib_mathvector)
 add_subdirectory(lib_stack)
 add_subdirectory(lib_stacklist)
 add_subdirectory(lib_queue)
+add_subdirectory(lib_queuelist)
 add_subdirectory(lib_list)
 add_subdirectory(lib_algorithms)
 
