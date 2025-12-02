@@ -38,26 +38,26 @@ StackList<T>::StackList(List<T>& other) {
 template <class T>
 StackList<T>::StackList(std::initializer_list<T> init_list) {
   for (const auto& item : init_list) {
-    _data.push_back(item);
+    _data.push_back(item); // тут
   }
 }
 template <class T>
 StackList<T>::StackList(StackList<T>& other) {
   for (auto it = other._data.begin(); it != other._data.end(); ++it) {
-    _data.push_back(*it);
+    _data.push_back(*it); // тут
   }
 }
 
 template <class T>
 void StackList<T>::push(T val) {
   if (is_full()) throw std::logic_error("push(): Stack is full!");
-  _data.push_back(val);
+  _data.push_back(val); // push_front()
 }
 
 template <class T>
 void StackList<T>::pop() {
   if (is_empty()) throw std::logic_error("pop(): Stack is empty!");
-  _data.pop_back();
+  _data.pop_back(); // сделать через pop_front чтобы сложность была O(1)
 }
 
 template <class T>
@@ -69,7 +69,7 @@ T StackList<T>::top() {
     prev = it;
     ++it;
   }
-  return *prev;
+  return *prev; // возращать _head;
 }
 
 template <class T>

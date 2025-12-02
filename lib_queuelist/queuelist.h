@@ -10,7 +10,7 @@
 
 template <class T>
 class QueueList {
-  List<T> _data;
+  List<T> _data; // добавить поле размера и при pop и push
 
  public:
   QueueList() = default;
@@ -71,6 +71,8 @@ void QueueList<T>::pop() {
   for (const auto& val : temp) {
     _data.push_back(val);
   }
+
+  //_data.pop_front(); // Должен быть
 }
 
 template <class T>
@@ -102,7 +104,7 @@ bool QueueList<T>::is_empty() noexcept {
 
 template <class T>
 bool QueueList<T>::is_full() noexcept {
-  return false;
+  return false; // может и true возращать сравнивать count и size
 }
 
 template <class T>
