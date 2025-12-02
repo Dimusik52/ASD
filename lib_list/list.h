@@ -27,6 +27,9 @@ class List {
   void insert_after(Node* node, const T& value);
   void insert(size_t pos, const T& value);
   void pop_back();
+  void pop_front();
+  void erase(size_t pos);
+  void erase(Node* node);
 
   class Iterator {
     Node* _current;
