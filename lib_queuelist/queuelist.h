@@ -58,7 +58,7 @@ void QueueList<T>::pop() {
     return;
   }
 
-  std::vector<T> temp; // Можно обойтись без вектора. Проверить копирование и деструктор у List!
+  List<T> temp;
   auto it = _data.begin();
   ++it;
 
