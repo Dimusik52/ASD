@@ -211,4 +211,29 @@ bool is_looped_reverse(List<T>& list) {
   return false;
 }
 
+template <class T>
+List<T>::Node* find_loop(List<T>& list) {
+  auto slow = list.begin();
+  auto fast = list.begin();
+
+  if (slow == list.end()) return nullptr;
+
+  if (slow.get_node()->next == slow.get_node()) {
+    return slow.get_node();
+  }
+
+  while (true) {
+    ++slow;
+    if (slow == list.end()) return nullptr;
+
+    ++fast;
+    if (fast == list.end()) return nullptr;
+
+    ++fast;
+    if (fast == list.end()) return nullptr;
+
+    if (slow == fast) return slow.get_node();
+  }
+}
+
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_
