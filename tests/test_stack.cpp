@@ -139,3 +139,20 @@ TEST(StackTest, IsNotFull) {
   s.pop();
   EXPECT_EQ(s.is_full(), false);
 }
+
+TEST(StackTest, CombinedActions) {
+  Stack<int> s(10);
+  for (int i = 0; i < 5; i++) {
+    s.push(i+1);
+  }
+
+  for (int i = 0; i < 3; i++) {
+    s.pop();
+  }
+
+  EXPECT_EQ(s.top(), 2);
+
+  s.push(9);
+
+  EXPECT_EQ(s.top(), 9);
+}

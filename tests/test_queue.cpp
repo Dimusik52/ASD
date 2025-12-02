@@ -86,6 +86,10 @@ TEST(QueueTest, HeadAndTail) {
   q.push(40);
   EXPECT_EQ(q.head(), 20);
   EXPECT_EQ(q.tail(), 40);
+
+  q.pop();
+  EXPECT_EQ(q.head(), 30);
+  EXPECT_EQ(q.tail(), 40);
 }
 
 TEST(QueueTest, IsEmpty) {
