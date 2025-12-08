@@ -8,6 +8,12 @@
 #include "../lib_stack/stack.h"
 #include "../lib_list/list.h"
 
+template <class T>
+class List;
+
+template <class T>
+typename List<T>::Node* find_loop(List<T>& list);
+
 template <typename T>
 int matrix_get_local_min(Matrix<T> matrix) {
   std::srand(time(0));
@@ -212,7 +218,7 @@ bool is_looped_reverse(List<T>& list) {
 }
 
 template <class T>
-List<T>::Node* find_loop(List<T>& list) {
+typename List<T>::Node* find_loop(List<T>& list) {
   auto slow = list.begin();
   auto fast = list.begin();
 
