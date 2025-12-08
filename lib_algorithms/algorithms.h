@@ -8,6 +8,12 @@
 #include "../lib_stack/stack.h"
 #include "../lib_list/list.h"
 
+template <class T>
+class List;
+
+template <class T>
+typename List<T>::Node* find_loop(List<T>& list);
+
 template <typename T>
 int matrix_get_local_min(Matrix<T> matrix) {
   std::srand(time(0));
@@ -209,6 +215,31 @@ bool is_looped_reverse(List<T>& list) {
     }
   }
   return false;
+}
+
+template <class T>
+typename List<T>::Node* find_loop(List<T>& list) {
+  auto slow = list.begin();
+  auto fast = list.begin();
+
+  if (slow == list.end()) return nullptr;
+
+  if (slow.get_node()->next == slow.get_node()) {
+    return slow.get_node();
+  }
+
+  while (true) {
+    ++slow;
+    if (slow == list.end()) return nullptr;
+
+    ++fast;
+    if (fast == list.end()) return nullptr;
+
+    ++fast;
+    if (fast == list.end()) return nullptr;
+
+    if (slow == fast) return slow.get_node();
+  }
 }
 
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_
