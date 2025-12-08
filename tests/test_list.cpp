@@ -211,6 +211,163 @@ TEST(List, SequenceOfOperations) {
   EXPECT_EQ(values, std::vector<int>({1, 99, 2}));
 }
 
+TEST(List, BasicOperationsPopFront) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+
+  list.pop_front();
+
+  std::vector<int> values;
+  for (int val : list) {
+    values.push_back(val);
+  }
+  EXPECT_EQ(values, std::vector<int>({2, 3}));
+}
+
+TEST(List, SingleElementPopFront) {
+  List<int> list;
+  list.push_back(42);
+
+  list.pop_front();
+
+  EXPECT_TRUE(list.is_empty());
+  EXPECT_EQ(list.begin(), list.end());
+}
+
+TEST(List, MultiplePopFront) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+
+  list.pop_front();  // [2, 3]
+  list.pop_front();  // [3]
+  list.pop_front();  // []
+
+  EXPECT_TRUE(list.is_empty());
+}
+
+TEST(List, ThrowsWhenEmptyPopFront) {
+  List<int> list;
+
+  EXPECT_THROW(list.pop_front(), std::logic_error);
+
+  list.push_back(1);
+  list.pop_front();
+  EXPECT_THROW(list.pop_front(), std::logic_error);
+}
+
+TEST(List, BasicOperationsErasePos) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+  list.push_back(4);
+
+  list.erase(1);
+
+  std::vector<int> values;
+  for (int val : list) {
+    values.push_back(val);
+  }
+  EXPECT_EQ(values, std::vector<int>({1, 3, 4}));
+}
+
+TEST(List, EraseFirstErasePos) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+
+  list.erase((size_t) 0);
+
+  std::vector<int> values;
+  for (int val : list) {
+    values.push_back(val);
+  }
+  EXPECT_EQ(values, std::vector<int>({2, 3}));
+}
+
+TEST(List, EraseLastErasePos) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+
+  list.erase(2);
+
+  std::vector<int> values;
+  for (int val : list) {
+    values.push_back(val);
+  }
+  EXPECT_EQ(values, std::vector<int>({1, 2}));
+  EXPECT_EQ(*list.begin(), 1);
+}
+
+TEST(List, ThrowsWhenEmptyErasePos) {
+  List<int> list;
+  EXPECT_THROW(list.erase((size_t)0), std::logic_error);
+}
+
+TEST(List, ThrowsOutOfRange) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+
+  EXPECT_THROW(list.erase(5), std::logic_error);
+  EXPECT_THROW(list.erase(2), std::logic_error);
+}
+
+
+TEST(List, BasicOperationsEraseNode) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+
+  auto it = list.begin();
+  it++;
+
+  list.erase(it.get_node());
+
+  std::vector<int> values;
+  for (int val : list) {
+    values.push_back(val);
+  }
+  EXPECT_EQ(values, std::vector<int>({1, 3}));
+}
+
+TEST(List, EraseFirstNodeEraseNode) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+
+  list.erase((size_t)0);
+
+  EXPECT_EQ(*list.begin(), 2);
+}
+
+TEST(List, EraseLastNodeEraseNode) {
+  List<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+
+  auto it = list.begin();
+  it++;
+  it++;
+
+  list.erase(it.get_node());
+
+  std::vector<int> values;
+  for (int val : list) {
+    values.push_back(val);
+  }
+  EXPECT_EQ(values, std::vector<int>({1, 2}));
+}
+
 
 
 TEST(ListIterator, EmptyList) {
