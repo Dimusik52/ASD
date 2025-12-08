@@ -10,11 +10,15 @@
 
 template <class T>
 class QueueList {
-  List<T> _data; // добавить поле размера и при pop и push
+  List<T> _data;
+  size_t _size;
+  size_t _count;
 
  public:
-  QueueList() = default;
+  QueueList();
+  QueueList(size_t size);
   QueueList(std::initializer_list<T> init_list);
+  QueueList(std::initializer_list<T> init_list, size_t size);
   QueueList(QueueList<T>& other);
 
   void push(T val);
@@ -28,14 +32,28 @@ class QueueList {
 };
 
 template <class T>
-QueueList<T>::QueueList(std::initializer_list<T> init_list) {
+QueueList<T>::QueueList() : _size(0), _count(0) {}
+
+template <class T>
+QueueList<T>::QueueList(size_t size) : _size(size), _count(0) {}
+
+template <class T>
+QueueList<T>::QueueList(std::initializer_list<T> init_list) : _size(0),
+    _count(0) {
   for (const auto& item : init_list) {
     push(item);
   }
 }
 
 template <class T>
-QueueList<T>::QueueList(QueueList<T>& other) {
+QueueList<T>::QueueList(std::initializer_list<T> init_list, size_t size) : _size(size), _count(0) {
+  for (const auto& item : init_list) {
+    push(item);
+  }
+}
+
+template <class T>
+QueueList<T>::QueueList(QueueList<T>& other) : _size(other._size), _count(0) {
   for (auto it = other._data.begin(); it != other._data.end(); ++it) {
     _data.push_back(*it);
   }
@@ -44,6 +62,7 @@ QueueList<T>::QueueList(QueueList<T>& other) {
 template <class T>
 void QueueList<T>::push(T val) {
   _data.push_back(val);
+  _count++;
 }
 
 template <class T>
@@ -51,28 +70,8 @@ void QueueList<T>::pop() {
   if (is_empty()) {
     throw std::logic_error("pop(): Queue is empty!");
   }
-
-  auto first = _data.begin();
-  if (++first == _data.end()) {
-    _data.pop_back();
-    return;
-  }
-
-  List<T> temp;
-  auto it = _data.begin();
-  ++it;
-
-  while (it != _data.end()) {
-    temp.push_back(*it);
-    ++it;
-  }
-
-  _data = List<T>();
-  for (const auto& val : temp) {
-    _data.push_back(val);
-  }
-
-  //_data.pop_front(); // Должен быть
+  _data.pop_front();
+  _count--;
 }
 
 template <class T>
@@ -104,7 +103,7 @@ bool QueueList<T>::is_empty() noexcept {
 
 template <class T>
 bool QueueList<T>::is_full() noexcept {
-  return false; // может и true возращать сравнивать count и size
+  return _size > 0 && _count >= _size;
 }
 
 template <class T>
