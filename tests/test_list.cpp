@@ -420,4 +420,19 @@ TEST(ListIterator, WriteOperations) {
   EXPECT_EQ(*it, 200);
 }
 
-//Добавить тест с циклами и обеими операциями (использовать it++) (в двусвязном написать обратную итерирование)
+TEST(List, CyclesList) {
+  List<int> list;
+  list.push_back(10);
+  list.push_back(20);
+  list.push_back(30);
+  list.push_back(40);
+  list.push_back(50);
+  list.push_back(60);
+  list.push_back(70);
+  int a = 10;
+
+  for (auto i = list.begin(); i != list.end(); i++) {
+    EXPECT_EQ(*i, a);
+    a += 10;
+  }
+}
