@@ -381,3 +381,32 @@ TEST(FindLoopTest, LoopInMiddleLarge) {
     node_end->next = original_next;
   }
 }
+
+
+TEST(DSUTask, CountIslands) {
+  std::vector<std::vector<int>> grid = {{0, 1, 0, 0, 1},
+                                        {0, 1, 1, 0, 1},
+                                        {1, 1, 0, 1, 1},
+                                        {0, 0, 0, 0, 1},
+                                        {1, 0, 1, 1, 1}};
+  std::vector<std::vector<int>> grid1 = {{1, 0, 1, 0, 1},
+                                         {0, 1, 0, 1, 0},
+                                         {1, 0, 1, 0, 1},
+                                         {0, 1, 0, 1, 0},
+                                         {1, 0, 1, 0, 1}};
+  std::vector<std::vector<int>> grid2 = {{0, 0, 1, 0, 0},
+                                         {0, 0, 1, 0, 0},
+                                         {1, 1, 1, 1, 1},
+                                         {0, 0, 1, 0, 0},
+                                         {0, 0, 1, 0, 0}};
+  std::vector<std::vector<int>> grid3 = {{1, 1, 0, 1, 1},
+                                         {1, 1, 0, 1, 1},
+                                         {0, 0, 0, 0, 0},
+                                         {1, 1, 0, 1, 1},
+                                         {1, 1, 0, 1, 1}};
+
+  EXPECT_EQ(count_islands(grid), 3);
+  EXPECT_EQ(count_islands(grid1), 13);
+  EXPECT_EQ(count_islands(grid2), 1);
+  EXPECT_EQ(count_islands(grid3), 4);
+}
