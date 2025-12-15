@@ -166,7 +166,7 @@ TEST(MatrixTest, InitializerListConstructor) {
 
 TEST(MatrixTest, InvalidInitializerListThrows) {
   EXPECT_THROW(
-      Matrix<int>({{1, 2}, {3, 4, 5}}),  // Дополнительные скобки вокруг всего
+      Matrix<int>({{1, 2}, {3, 4, 5}}),
       std::invalid_argument);
 }
 
