@@ -348,3 +348,36 @@ TEST(FindLoopTest, IteratorStillWorks) {
   }
   EXPECT_EQ(values, std::vector<int>({1, 2, 3}));
 }
+
+
+TEST(FindLoopTest, LoopInMiddleLarge) {
+  List<int> list;
+  for (int i = 1; i <= 10; i++) {
+    list.push_back(i);
+  }
+
+  auto it_start = list.begin();
+  auto it_cycle_start = list.begin();
+  auto it_end = list.begin();
+
+  it_cycle_start += 4;
+  it_end += 9;
+
+  auto* node_cycle_start = it_cycle_start.get_node();
+  auto* node_end = it_end.get_node();
+
+  if (node_end && node_cycle_start) {
+    auto original_next = node_end->next;  // сохраняем оригинальную связь
+    node_end->next = node_cycle_start;  // создаем цикл: 10 → 5
+
+    auto result = find_loop(list);
+    EXPECT_NE(result, nullptr);
+    EXPECT_EQ(
+        result,
+        node_cycle_start);  // начало цикла должно быть узел со значением 5
+    EXPECT_EQ(result->value, 5);
+
+    // Восстанавливаем
+    node_end->next = original_next;
+  }
+}
