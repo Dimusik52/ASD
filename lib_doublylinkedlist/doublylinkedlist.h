@@ -111,83 +111,10 @@ class DoublyLinkedList {
       return *this;
     }
   };
-
-  class ReverseIterator {
-    Node* _current;
-
-   public:
-    ReverseIterator() : _current(nullptr){};
-    ReverseIterator(Node* node) : _current(node){};
-
-    Node* get_node() { return _current; }
-
-    ReverseIterator& operator++() noexcept {
-      if (_current != nullptr) {
-        _current = _current->prev;
-      }
-      return *this;
-    }
-
-    ReverseIterator& operator--() noexcept {
-      if (_current != nullptr) {
-        _current = _current->next;
-      }
-      return *this;
-    }
-
-        ReverseIterator operator++(int) noexcept {
-      ReverseIterator temp = *this;
-      ++(*this);
-      return temp;
-    }
-
-    ReverseIterator operator--(int) noexcept {
-      ReverseIterator temp = *this;
-      --(*this);
-      return temp;
-    }
-
-    bool operator!=(const ReverseIterator& other) const noexcept {
-      return _current != other._current;
-    }
-
-    T& operator*() {
-      if (_current == nullptr) {
-        throw std::runtime_error("ReverseIterator: Dereferencing end iterator");
-      }
-      return _current->value;
-    }
-
-    ReverseIterator& operator+=(size_t n) {
-      for (size_t i = 0; i < n && _current != nullptr; ++i) {
-        _current = _current->prev;
-      }
-      return *this;
-    }
-
-    ReverseIterator& operator-=(size_t n) {
-      for (size_t i = 0; i < n && _current != nullptr; ++i) {
-        _current = _current->next;
-      }
-      return *this;
-    }
-
-    bool operator==(const ReverseIterator& other) const noexcept {
-      return _current == other._current;
-    }
-
-    T* operator->() {
-      if (_current == nullptr) {
-        throw std::runtime_error("ReverseIterator: Accessing end iterator");
-      }
-      return &(_current->value);
-    }
-  };
-
   inline Iterator begin();
   inline Iterator end();
-  inline ReverseIterator rbegin();
-  inline ReverseIterator rend();
+  inline Iterator rbegin();
+  inline Iterator rend();
 };
 
 template <class T>
@@ -409,15 +336,13 @@ inline typename DoublyLinkedList<T>::Iterator DoublyLinkedList<T>::end() {
 }
 
 template <class T>
-inline typename DoublyLinkedList<T>::ReverseIterator
-DoublyLinkedList<T>::rbegin() {
-  return ReverseIterator(_tail);
+inline typename DoublyLinkedList<T>::Iterator DoublyLinkedList<T>::rbegin() {
+  return Iterator(_tail);
 }
 
 template <class T>
-inline typename DoublyLinkedList<T>::ReverseIterator
-DoublyLinkedList<T>::rend() {
-  return ReverseIterator(nullptr);
+inline typename DoublyLinkedList<T>::Iterator DoublyLinkedList<T>::rend() {
+  return Iterator(nullptr);
 }
 
 

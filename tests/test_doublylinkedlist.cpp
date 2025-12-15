@@ -252,7 +252,7 @@ TEST(DoublyLinkedListTest, ReverseIteration) {
   list.push_back(3);
 
   std::vector<int> values;
-  for (auto it = list.rbegin(); it != list.rend(); ++it) {
+  for (auto it = list.rbegin(); it != list.rend(); --it) {
     values.push_back(*it);
   }
   EXPECT_EQ(values, std::vector<int>({3, 2, 1}));
@@ -266,9 +266,9 @@ TEST(DoublyLinkedListTest, ManualReverseIteration) {
 
   auto it = list.rbegin();
   EXPECT_EQ(*it, 3);
-  ++it;
+  --it;
   EXPECT_EQ(*it, 2);
-  ++it;
+  --it;
   EXPECT_EQ(*it, 1);
 }
 
@@ -293,10 +293,10 @@ TEST(DoublyLinkedListTest, IteratorMinusEquals) {
   }
 
   auto it = list.rbegin();
-  it += 3;
+  it -= 3;
   EXPECT_EQ(*it, 7);
 
-  it += 2;
+  it -= 2;
   EXPECT_EQ(*it, 5);
 }
 
@@ -365,4 +365,41 @@ TEST(DoublyLinkedListTest, EmptyListIteration) {
     count++;
   }
   EXPECT_EQ(count, 0);
+}
+
+TEST(DoublyLinkedListTest, ReverseRangeBasedFor) {
+  DoublyLinkedList<int> list;
+  for (int i = 1; i <= 5; i++) {
+    list.push_back(i);
+  }
+
+  std::vector<int> reversed_values;
+  for (auto it = list.rbegin(); it != list.rend(); --it) {
+    reversed_values.push_back(*it);
+  }
+  EXPECT_EQ(reversed_values, std::vector<int>({5, 4, 3, 2, 1}));
+
+  std::vector<int> forward_values;
+  for (auto it = list.begin(); it != list.end(); it++) {
+    forward_values.push_back(*it);
+  }
+  EXPECT_EQ(forward_values, std::vector<int>({1, 2, 3, 4, 5}));
+}
+
+TEST(DoublyLinkedListTest, ReverseIteratorModifyValues) {
+  DoublyLinkedList<int> list;
+  for (int i = 1; i <= 5; i++) {
+    list.push_back(i);
+  }
+
+  for (auto it = list.rbegin(); it != list.rend(); --it) {
+    *it = (*it) * 2;
+  }
+
+  std::vector<int> expected = {2, 4, 6, 8, 10};
+  std::vector<int> actual;
+  for (auto it = list.begin(); it != list.end(); it++) {
+    actual.push_back(*it);
+  }
+  EXPECT_EQ(actual, expected);
 }
