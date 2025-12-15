@@ -7,6 +7,7 @@
 #include "../lib_matrix/matrix.h"
 #include "../lib_stack/stack.h"
 #include "../lib_list/list.h"
+#include "../lib_dsu/dsu.h"
 
 template <class T>
 class List;
@@ -246,6 +247,59 @@ typename List<T>::Node* find_loop(List<T>& list) {
   }
 
   return slow.get_node();
+}
+
+
+//DSU
+
+int count_islands(const std::vector<std::vector<int>>& grid) {
+  if (grid.empty()) return 0;
+
+  int rows = grid.size();
+  int cols = grid[0].size();
+
+  DSU<int> dsu(rows * cols);
+
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      if (grid[i][j] == 0) continue;
+
+      int current = i * cols + j;
+
+      if (j > 0 && grid[i][j - 1] == 1) {
+        dsu.union_sets(current, i * cols + (j - 1));
+      }
+
+      if (i > 0 && grid[i - 1][j] == 1) {
+        dsu.union_sets(current, (i - 1) * cols + j);
+      }
+
+      if (j < cols - 1 && grid[i][j + 1] == 1) {
+        dsu.union_sets(current, i * cols + (j + 1));
+      }
+
+      if (i < rows - 1 && grid[i + 1][j] == 1) {
+        dsu.union_sets(current, (i + 1) * cols + j);
+      }
+    }
+  }
+
+  std::vector<bool> uniqueRoot(rows * cols, false);
+  int islandCount = 0;
+
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      if (grid[i][j] == 1) {
+        int root = dsu.find(i * cols + j);
+        if (!uniqueRoot[root]) {
+          uniqueRoot[root] = true;
+          islandCount++;
+        }
+      }
+    }
+  }
+
+  return islandCount;
 }
 
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_
