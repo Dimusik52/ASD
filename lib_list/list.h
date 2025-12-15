@@ -27,6 +27,12 @@ class List {
   void insert_after(Node* node, const T& value);
   void insert(size_t pos, const T& value);
   void pop_back();
+  void pop_front();
+  void erase(size_t pos);
+  void erase(Node* node);
+
+  template <class U>
+  friend typename List<U>::Node* find_loop(List<U>& list);
 
   class Iterator {
     Node* _current;
@@ -192,6 +198,87 @@ void List<T>::pop_back() {
   delete _tail;
   _tail = cur;
   cur->next = nullptr;
+}
+
+template <class T>
+void List<T>::pop_front() {
+  if (is_empty()) {
+    throw std::logic_error("List.pop_back(): List is empty");
+  }
+
+  Node* old_head = _head;
+  _head = _head->next;
+  if (_head == nullptr) {
+    _tail = nullptr;
+  }
+  delete old_head;
+}
+
+template <class T>
+void List<T>::erase(size_t pos) {
+  if (is_empty()) {
+    throw std::logic_error("List.pop_back(): List is empty");
+  }
+
+  if (pos == 0) {
+    pop_front();
+    return;
+  }
+
+  Node* current = _head;
+  for (size_t i = 0; i < pos - 1 && current != nullptr; i++) {
+    current = current->next;
+  }
+
+  if (current == nullptr || current->next == nullptr) {
+    throw std::logic_error("List.erase(): Position out of range");
+  }
+
+  Node* node_to_delete = current->next;
+
+  current->next = node_to_delete->next;
+
+  if (node_to_delete == _tail) {
+    _tail = current;
+  }
+  
+  delete node_to_delete;
+}
+
+template <class T>
+void List<T>::erase(Node* node) {
+  if (is_empty()) {
+    throw std::logic_error("List.pop_back(): List is empty");
+  }
+  if (node == nullptr) {
+    throw std::logic_error("List.erase(): Cannot erase nullptr");
+  }
+
+  if (node == _head) {
+    _head = _head->next;
+    if (_head == nullptr) {
+      _tail = nullptr;
+    }
+    delete node;
+    return;
+  }
+
+  Node* current = _head;
+  while (current->next != node && current != nullptr) {
+    current = current->next;
+  }
+
+  if (current == nullptr) {
+    throw std::logic_error("List.erase(): Node not found in list");
+  }
+
+  current->next = node->next;
+
+  if (node == _tail) {
+    _tail = current;
+  }
+
+  delete node;
 }
 
 template <class T>
