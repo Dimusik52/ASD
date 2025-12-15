@@ -30,11 +30,16 @@ class Matrix : public MathVector<MathVector<T>> {
   MathVector<T>& operator[](int);
   const MathVector<T>& operator[](int) const;
 
-  Matrix<T> operator+(const Matrix& other);
-  Matrix<T> operator-(const Matrix& other);
+  Matrix<T> operator+(const Matrix& other) const;
+  Matrix<T>& operator+=(const Matrix<T>& other);
+  Matrix<T> operator-(const Matrix& other) const;
+  Matrix<T>& operator-=(const Matrix<T>& other);
 
-  Matrix<T> operator*(const T val);
-  MathVector<T> operator*(const MathVector<T>& vec);
+
+
+  Matrix<T> operator*(const T val) const;
+  Matrix<T>& operator*=(T val);
+  MathVector<T> operator*(const MathVector<T>& vec) const;
 
   Matrix<T> operator*(const Matrix<T>& other);
 
@@ -58,7 +63,7 @@ class Matrix : public MathVector<MathVector<T>> {
     return result;
   }
 
-  Matrix<T> transpose();
+  Matrix<T> transpose() const;
   Matrix<T>& operator=(const Matrix<T>& other);
 
   friend std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix) {
@@ -134,7 +139,7 @@ Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> init_list) {
     }
   }
 
-  this->resize(_rows);
+  this->resize(_rows, false);
   size_t i = 0;
   for (const auto& row_list : init_list) {
     (*this)[i] = MathVector<T>(_cols);
@@ -189,44 +194,65 @@ const MathVector<T>& Matrix<T>::operator[](int row) const {
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator+(const Matrix& other) {
+Matrix<T> Matrix<T>::operator+(const Matrix& other) const {
   if (_rows != other._rows || _cols != other._cols) {
-    throw std::logic_error(
-        "Matrix.operator+: Matrices must have same dimensions");
+    throw std::logic_error("Matrices must have same dimensions");
   }
-
-  Matrix<T> result(_rows, _cols);
-  for (int i = 0; i < _rows; i++) {
-    result[i] = (*this)[i] + other[i];
-  }
+  Matrix<T> result = *this;
+  result.MathVector<MathVector<T>>::operator+=(other);
   return result;
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator-(const Matrix& other) {
+Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& other) {
   if (_rows != other._rows || _cols != other._cols) {
-    throw std::logic_error(
-        "Matrix.operator-: Matrices must have same dimensions");
+    throw std::logic_error("Matrices must have same dimensions");
   }
+  MathVector<MathVector<T>>::operator+=(other);
+  return *this;
+}
 
-  Matrix<T> result(_rows, _cols);
-  for (int i = 0; i < _rows; i++) {
-    result[i] = (*this)[i] - other[i];
+template <typename T>
+Matrix<T> Matrix<T>::operator-(const Matrix& other) const {
+  if (_rows != other._rows || _cols != other._cols) {
+    throw std::logic_error("Matrices must have same dimensions");
   }
+  Matrix<T> result = *this;
+  result.MathVector<MathVector<T>>::operator-=(other);
   return result;
 }
 
 template <typename T>
-Matrix<T> Matrix<T>::operator*(const T val) {
-  Matrix<T> result(_rows, _cols);
-  for (int i = 0; i < _rows; i++) {
-    result[i] = (*this)[i] * val;
+Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& other) {
+  if (this->size() != other.size()) {
+    throw std::logic_error("Matrices must have same number of rows");
   }
+  for (size_t i = 0; i < this->size(); i++) {
+    if ((*this)[i].size() != other[i].size()) {
+      throw std::logic_error("Matrices must have same dimensions");
+    }
+  }
+  MathVector<MathVector<T>>::operator-=(other);
+  return *this;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(const T val) const {
+  Matrix<T> result = *this;
+  result *= val;
   return result;
 }
 
 template <typename T>
-MathVector<T> Matrix<T>::operator*(const MathVector<T>& vec) {
+Matrix<T>& Matrix<T>::operator*=(T val) {
+  for (size_t i = 0; i < this->size(); i++) {
+    (*this)[i] *= val;
+  }
+  return *this;
+}
+
+template <typename T>
+MathVector<T> Matrix<T>::operator*(const MathVector<T>& vec) const {
   if (_cols != vec.size()) {
     throw std::logic_error(
         "Matrix.operator*: Incompatible dimensions for matrix-vector "
@@ -267,7 +293,7 @@ Matrix<T> Matrix<T>::operator*(
 
 
 template <class T>
-Matrix<T> Matrix<T>::transpose() {
+Matrix<T> Matrix<T>::transpose() const {
   Matrix<T> result(_cols, _rows);
   for (int i = 0; i < _rows; i++) {
     for (int j = 0; j < _cols; j++) {

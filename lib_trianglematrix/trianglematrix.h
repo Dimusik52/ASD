@@ -8,147 +8,189 @@
 #include "../lib_matrix/matrix.h"
 
 template <typename T>
-class TriangleMatrix;
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const TriangleMatrix<T>& matrix);
-template <typename T>
-std::istream& operator>>(std::istream& is, const TriangleMatrix<T>& matrix);
-
-template <typename T>
 class TriangleMatrix : public Matrix<T> {
  private:
-  size_t _rows;
-  size_t _cols;
-  bool _is_upper;
+  size_t _dimension;
 
  public:
-  TriangleMatrix();
-  TriangleMatrix(size_t rows, size_t cols, bool is_upper = true);
-  explicit TriangleMatrix(Matrix<T>& matrix, bool is_upper = true);
-  TriangleMatrix(std::initializer_list<std::initializer_list<T>> init_list,
-                 bool is_upper = true);
-  ~TriangleMatrix();
+  explicit TriangleMatrix(size_t dimension = 0);
+  TriangleMatrix(size_t dimension, const T* data, size_t data_size);
+  TriangleMatrix(const TriangleMatrix<T>& other) = default;
+  ~TriangleMatrix() = default;
 
-  bool is_upper() const { return _is_upper; }
-  size_t get_rows() const { return _rows; }
-  size_t get_cols() const { return _cols; }
+  inline size_t get_dimension() const { return _dimension; }
 
-  TriangleMatrix<T> operator+(TriangleMatrix<T>& tr_matrix);
-  TriangleMatrix<T> operator-(TriangleMatrix<T>& tr_matrix);
-  TriangleMatrix<T> operator*(TriangleMatrix<T>& tr_matrix);
+  T& at(size_t row, size_t col);
+  const T& at(size_t row, size_t col) const;
 
-  friend std::ostream& operator<< <T>(std::ostream& os,
-                                  const TriangleMatrix<T>& matrix);
-  friend std::istream& operator>> <T>(std::istream& is,
-                                  const TriangleMatrix<T>& matrix);
+  TriangleMatrix<T>& operator+=(const TriangleMatrix<T>& other);
+  TriangleMatrix<T>& operator-=(const TriangleMatrix<T>& other);
+  TriangleMatrix<T>& operator*=(T val);
 
-  void make_triangular(bool fill_with_zeros = true);
+  TriangleMatrix<T> operator+(const TriangleMatrix<T>& other) const;
+  TriangleMatrix<T> operator-(const TriangleMatrix<T>& other) const;
+  TriangleMatrix<T> operator*(T val) const;
+  TriangleMatrix<T> operator*(const TriangleMatrix<T>& other) const;
 
- private:
-  void initialize_triangular(bool is_upper);
+  TriangleMatrix<T>& operator=(const TriangleMatrix<T>& other);
+
+  bool operator==(const TriangleMatrix<T>& other) const;
+  bool operator!=(const TriangleMatrix<T>& other) const;
+
+  friend std::ostream& operator<<(std::ostream& os, const TriangleMatrix<T>& matrix) {
+    for (size_t i = 0; i < matrix._dimension; i++) {
+      for (size_t j = 0; j < matrix._dimension; j++) {
+        if (j < i) {
+          os << "0";
+        } else {
+          os << matrix.at(i, j);
+        }
+        if (j < matrix._dimension - 1) {
+          os << " ";
+        }
+      }
+      if (i < matrix._dimension - 1) {
+        os << "\n";
+      }
+    }
+    return os;
+  }
+
+  friend std::istream& operator>>(std::istream& is, TriangleMatrix<T>& matrix) {
+    for (size_t i = 0; i < matrix._dimension; i++) {
+      for (size_t j = i; j < matrix._dimension; j++) {
+        T value;
+        is >> value;
+        matrix.at(i, j) = value;
+      }
+
+      for (size_t j = 0; j < i; j++) {
+        T dummy;
+        is >> dummy;
+      }
+    }
+    return is;
+  }
 };
 
 template <typename T>
-TriangleMatrix<T>::TriangleMatrix() : _rows(0), _cols(0), _is_upper(true) {
-  ;
-}
-template <typename T>
-TriangleMatrix<T>::TriangleMatrix(size_t rows, size_t cols,
-                                  bool is_upper = true)
-    : _rows(rows), _cols(cols), _is_upper(is_upper) {
-  Matrix<T>::resize(rows, false);
-  for (size_t i = 0; i < rows; i++) {
-    (*this)[i] = MathVector<T>(cols);
+TriangleMatrix<T>::TriangleMatrix(size_t dimension)
+    : Matrix<T>(dimension, dimension), _dimension(dimension) {
+  for (size_t i = 0; i < dimension; i++) {
+    (*this)[i] = MathVector<T>(dimension - i);
   }
-  initialize_triangular(is_upper);
 }
 
 template <typename T>
-TriangleMatrix<T>::TriangleMatrix(Matrix<T>& matrix, bool is_upper = true)
-    : Matrix<T>(matrix),
-      _rows(matrix.get_rows()),
-      _cols(matrix.get_cols()),
-      _is_upper(is_upper) {
-  make_triangular(false);
-}
+TriangleMatrix<T>::TriangleMatrix(size_t dimension, const T* data,
+                                  size_t data_size)
+    : Matrix<T>(dimension, dimension), _dimension(dimension) {
+  if (!data) {
+    throw std::invalid_argument("Data pointer cannot be null");
+  }
 
-template <typename T>
-TriangleMatrix<T>::TriangleMatrix(
-    std::initializer_list<std::initializer_list<T>> init_list,
-                                  bool is_upper = true)
-    : _is_upper(is_upper) {
-  _rows = init_list.size();
-  _cols = (_rows > 0) ? init_list.begin()->size() : 0;
+  size_t required_size = dimension * (dimension + 1) / 2;
+  if (data_size < required_size) {
+    throw std::invalid_argument("Data array too small");
+  }
 
-  for (const auto& row : init_list) {
-    if (row.size() != _cols) {
-      throw std::logic_error(
-          "All rows must have the same size in initializer list");
+  for (size_t i = 0; i < dimension; i++) {
+    (*this)[i] = MathVector<T>(dimension - i);
+    for (size_t j = i; j < dimension; j++) {
+      size_t linear_index = i * dimension + j - (i * (i + 1) / 2);
+      (*this)[i][j - i] = data[linear_index];
     }
   }
-  Matrix<T>::resize(_rows, false);
-  size_t i = 0;
+}
 
-  for (const auto& row_list : init_list) {
-    (*this)[i] = MathVector<T>(_cols);
-    size_t j = 0;
-    for (const auto& element : row_list) {
-      (*this)[i][j] = element;
-      j++;
-    }
-    i++;
+template <typename T>
+T& TriangleMatrix<T>::at(size_t row, size_t col) {
+  if (row >= _dimension || col >= _dimension) {
+    throw std::out_of_range("Index out of range");
   }
-  make_triangular();
+  if (col < row) {
+    throw std::logic_error("Access to zero element in upper triangular matrix");
+  }
+  return (*this)[row][col - row];
 }
 
 template <typename T>
-TriangleMatrix<T>::~TriangleMatrix() {
-  ;
+const T& TriangleMatrix<T>::at(size_t row, size_t col) const {
+  if (row >= _dimension || col >= _dimension) {
+    throw std::out_of_range("Index out of range");
+  }
+  if (col < row) {
+    static const T zero = T();
+    return zero;
+  }
+  return (*this)[row][col - row];
 }
 
 template <typename T>
-void TriangleMatrix<T>::initialize_triangular(bool is_upper) {
-  if (is_upper) {
-    for (size_t i = 0; i < _rows; i++) {
-      for (size_t j = 0; j < i && j < _cols; j++) {
-        (*this)[i][j] = T(0);
+TriangleMatrix<T>& TriangleMatrix<T>::operator+=(
+    const TriangleMatrix<T>& other) {
+  if (_dimension != other._dimension) {
+    throw std::logic_error("Triangle matrices must have equal dimensions");
+  }
+  Matrix<T>::operator+=(other);
+  return *this;
+}
+
+template <typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::operator-=(
+    const TriangleMatrix<T>& other) {
+  if (_dimension != other._dimension) {
+    throw std::logic_error("Triangle matrices must have equal dimensions");
+  }
+  Matrix<T>::operator-=(other);
+  return *this;
+}
+
+template <typename T>
+TriangleMatrix<T>& TriangleMatrix<T>::operator*=(T val) {
+  Matrix<T>::operator*=(val);
+  return *this;
+}
+
+template <typename T>
+TriangleMatrix<T> TriangleMatrix<T>::operator+(
+    const TriangleMatrix<T>& other) const {
+  TriangleMatrix<T> result = *this;
+  result += other;
+  return result;
+}
+
+template <typename T>
+TriangleMatrix<T> TriangleMatrix<T>::operator-(
+    const TriangleMatrix<T>& other) const {
+  TriangleMatrix<T> result = *this;
+  result -= other;
+  return result;
+}
+
+template <typename T>
+TriangleMatrix<T> TriangleMatrix<T>::operator*(T val) const {
+  TriangleMatrix<T> result = *this;
+  result *= val;
+  return result;
+}
+
+template <typename T>
+TriangleMatrix<T> TriangleMatrix<T>::operator*(
+    const TriangleMatrix<T>& other) const {
+  if (_dimension != other._dimension) {
+    throw std::logic_error("Triangle matrices must have same dimension");
+  }
+
+  TriangleMatrix<T> result(_dimension);
+
+  for (size_t i = 0; i < _dimension; i++) {
+    for (size_t j = i; j < _dimension; j++) {
+      T sum = T();
+      for (size_t k = i; k <= j; k++) {
+        sum += this->at(i, k) * other.at(k, j);
       }
-    }
-  } else {
-    for (size_t i = 0; i < _rows; i++) {
-      for (size_t j = i + 1; j < _cols; j++) {
-        (*this)[i][j] = T(0);
-      }
-    }
-  }
-}
-
-template <typename T>
-void TriangleMatrix<T>::make_triangular(bool fill_with_zeros) {
-  if (fill_with_zeros) {
-    initialize_triangular(_is_upper);
-  }
-}
-
-template <typename T>
-TriangleMatrix<T> TriangleMatrix<T>::operator+(TriangleMatrix<T>& tr_matrix) {
-  if (_rows != tr_matrix._rows || _cols != tr_matrix._cols ||
-      _is_upper != tr_matrix._is_upper) {
-    throw std::logic_error("TriangleMatrix.operator+: Incopatible matrices!");
-  }
-  TriangleMatrix<T> result(_rows, _cols, _is_upper);
-
-  if (_is_upper) {
-    for (size_t i = 0; i < _rows; i++) {
-      for (size_t j = i; j < _cols; j++) {
-        result[i][j] = (*this)[i][j] + tr_matrix[i][j];
-      }
-    }
-  } else {
-    for (size_t i = 0; i < _rows; i++) {
-      for (size_t j = 0; j <= i && j < _cols; j++) {
-        result[i][j] = (*this)[i][j] + tr_matrix[i][j];
-      }
+      result.at(i, j) = sum;
     }
   }
 
@@ -156,120 +198,26 @@ TriangleMatrix<T> TriangleMatrix<T>::operator+(TriangleMatrix<T>& tr_matrix) {
 }
 
 template <typename T>
-TriangleMatrix<T> TriangleMatrix<T>::operator-(TriangleMatrix<T>& tr_matrix) {
-  if (_rows != tr_matrix._rows || _cols != tr_matrix._cols ||
-      _is_upper != tr_matrix._is_upper) {
-    throw std::logic_error("TriangleMatrix.operator-: Incopatible matrices!");
+TriangleMatrix<T>& TriangleMatrix<T>::operator=(
+    const TriangleMatrix<T>& other) {
+  if (this != &other) {
+    Matrix<T>::operator=(other);
+    _dimension = other._dimension;
   }
-  TriangleMatrix<T> result(_rows, _cols, _is_upper);
-
-  if (_is_upper) {
-    for (size_t i = 0; i < _rows; i++) {
-      for (size_t j = i; j < _cols; j++) {
-        result[i][j] = (*this)[i][j] - tr_matrix[i][j];
-      }
-    }
-  } else {
-    for (size_t i = 0; i < _rows; i++) {
-      for (size_t j = 0; j <= i && j < _cols; j++) {
-        result[i][j] = (*this)[i][j] - tr_matrix[i][j];
-      }
-    }
-  }
-
-  return result;
+  return *this;
 }
 
 template <typename T>
-TriangleMatrix<T> TriangleMatrix<T>::operator*(TriangleMatrix<T>& tr_matrix) {
-  if (_cols != tr_matrix._rows) {
-    throw std::logic_error(
-        "TriangleMatrix.operator*: Incompatible dimensions!");
+bool TriangleMatrix<T>::operator==(const TriangleMatrix<T>& other) const {
+  if (_dimension != other._dimension) {
+    return false;
   }
-
-  TriangleMatrix<T> result(_rows, tr_matrix._cols,
-                           _is_upper && tr_matrix._is_upper);
-
-  for (size_t i = 0; i < _rows; i++) {
-    for (size_t j = 0; j < tr_matrix._cols; j++) {
-      T sum = T(0);
-
-      size_t k_start, k_end;
-
-      if (_is_upper && tr_matrix._is_upper) {
-        k_start = std::max(i, size_t(0));
-        k_end = std::min(_cols, j + 1);
-      } else if (!_is_upper && !tr_matrix._is_upper) {
-        k_start = j;
-        k_end = std::min(i + 1, _cols);
-      } else if (_is_upper && !tr_matrix._is_upper) {
-        k_start = std::max(i, j);
-        k_end = _cols;
-      } else {
-
-        k_start = 0;
-        k_end = std::min(i + 1, j + 1);
-      }
-
-      for (size_t k = k_start; k < k_end; k++) {
-        sum += (*this)[i][k] * tr_matrix[k][j];
-      }
-
-      result[i][j] = sum;
-    }
-  }
-
-  return result;
+  return Matrix<T>::operator==(other);
 }
 
 template <typename T>
-std::ostream& operator<< <T>(std::ostream& os, const TriangleMatrix<T>& matrix) {
-  for (size_t i = 0; i < matrix._rows; ++i) {
-    os << "[ ";
-    for (size_t j = 0; j < matrix._cols; ++j) {
-      os << matrix[i][j];
-      if (j < matrix._cols - 1) {
-        os << ", ";
-      }
-    }
-    os << " ]";
-    if (i < matrix._rows - 1) {
-      os << "\n";
-    }
-  }
-  return os;
-}
-
-template <typename T>
-std::istream& operator>>
-    <T>(std::istream& is, const TriangleMatrix<T>& matrix) {
-  for (size_t i = 0; i < matrix._rows; ++i) {
-    for (size_t j = 0; j < matrix._cols; ++j) {
-      T value;
-      is >> value;
-
-      if (matrix._is_upper) {
-        if (j < i && value != T(0)) {
-          std::cout
-              << "Warning: Element at (" << i << "," << j
-              << ") should be 0 for upper triangular matrix. Setting to 0.\n";
-          matrix[i][j] = T(0);
-        } else {
-          matrix[i][j] = value;
-        }
-      } else {
-        if (j > i && value != T(0)) {
-          std::cout
-              << "Warning: Element at (" << i << "," << j
-              << ") should be 0 for lower triangular matrix. Setting to 0.\n";
-          matrix[i][j] = T(0);
-        } else {
-          matrix[i][j] = value;
-        }
-      }
-    }
-  }
-  return is;
+bool TriangleMatrix<T>::operator!=(const TriangleMatrix<T>& other) const {
+  return !(*this == other);
 }
 
 #endif  // !LIB_TRIANGLEMATRIX_TRIANGLEMATRIX_H_

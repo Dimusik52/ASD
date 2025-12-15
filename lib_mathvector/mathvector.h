@@ -35,7 +35,7 @@ class MathVector : public TVector<T> {
     os << "]";
     return os;
   }
-  friend std::istream& operator>>(std::istream& is, const MathVector<T>& data) {
+  friend std::istream& operator>>(std::istream& is, MathVector<T>& data) {
     for (size_t i = 0; i < data.size(); ++i) {
       if (!(is >> data[i])) {
         throw std::runtime_error("Invalid input for vector element");
@@ -52,8 +52,10 @@ MathVector<T>::MathVector() {}
 
 template <typename T>
 MathVector<T>::MathVector(size_t m) {
-  if (m < 0) throw std::logic_error("Size can't be negative!");
   this->resize(m, false);
+  for (size_t i = 0; i < m; i++) {
+    (*this)[i] = T();
+  }
 }
 
 template <class T>
@@ -86,7 +88,7 @@ MathVector<T> MathVector<T>::operator+(const MathVector<T>& other) const {
         "MathVector.operator+: vectors must be the same size");
   }
   MathVector<T> result(this->size());
-  for (int i = 0; i < this->size(); i++) {
+  for (size_t i = 0; i < this->size(); i++) {
     result[i] = (*this)[i] + other[i];
   }
   return result;
@@ -99,7 +101,7 @@ MathVector<T> MathVector<T>::operator-(const MathVector<T>& other) const {
         "MathVector.operator-: vectors Must be the same size");
   }
   MathVector<T> result(this->size());
-  for (int i = 0; i < this->size(); i++) {
+  for (size_t i = 0; i < this->size(); i++) {
     result[i] = (*this)[i] - other[i];
   }
   return result;
@@ -108,7 +110,7 @@ MathVector<T> MathVector<T>::operator-(const MathVector<T>& other) const {
 template <class T>
 MathVector<T> MathVector<T>::operator*(const T val) const {
   MathVector<T> result(this->size());
-  for (int i = 0; i < this->size(); i++) {
+  for (size_t i = 0; i < this->size(); i++) {
     result[i] = (*this)[i] * val;
   }
   return result;
@@ -120,7 +122,7 @@ MathVector<T>& MathVector<T>::operator+=(const MathVector<T>& other) {
     throw std::logic_error(
         "MathVector.operator+=: vectors Must be the same size");
   }
-  for (int i = 0; i < this->size(); i++) {
+  for (size_t i = 0; i < this->size(); i++) {
     (*this)[i] += other[i];
   }
   return *this;
@@ -132,7 +134,7 @@ MathVector<T>& MathVector<T>::operator-=(const MathVector<T>& other) {
     throw std::logic_error(
         "MathVector.operator-=: vectors Must be the same size");
   }
-  for (int i = 0; i < this->size(); i++) {
+  for (size_t i = 0; i < this->size(); i++) {
     (*this)[i] -= other[i];
   }
   return *this;
@@ -140,7 +142,7 @@ MathVector<T>& MathVector<T>::operator-=(const MathVector<T>& other) {
 
 template <class T>
 MathVector<T>& MathVector<T>::operator*=(const T val) {
-  for (int i = 0; i < this->size(); i++) {
+  for (size_t i = 0; i < this->size(); i++) {
     (*this)[i] *= val;
   }
   return *this;
@@ -154,7 +156,7 @@ T MathVector<T>::operator*(const MathVector<T>& other) const {
   }
 
   T result = T();
-  for (int i = 0; i < this->size(); i++) {
+  for (size_t i = 0; i < this->size(); i++) {
     result += (*this)[i] * other[i];
   }
   return result;
