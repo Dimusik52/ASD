@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
-#define MATRIX
+#define ALGORITHMS
 #ifdef EASY_EXAMPLE
 
 #include <iostream>
@@ -316,11 +316,13 @@ void main() {
 
   //std::string str = "() ())";
   //std::cout << check_brackets(str);
-  try {
-    read_expression("1+2*(1x*(x+y))");
-  } catch (std::exception& e) {
-    std::cerr << e.what();
-  }
+  //try {
+  //  read_expression("1+2*(1x*(x+y))");
+  //} catch (std::exception& e) {
+  //  std::cerr << e.what();
+  //}
+
+  generateAndPrintLabyrinth(10, 10);
  
 }
 

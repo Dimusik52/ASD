@@ -3,7 +3,9 @@
 #ifndef LIB_ALGORITHMS_ALGORITHMS_H_
 #define LIB_ALGORITHMS_ALGORITHMS_H_
 
+#include <format>
 #include <iostream>
+#include <iomanip>
 #include "../lib_matrix/matrix.h"
 #include "../lib_stack/stack.h"
 #include "../lib_list/list.h"
@@ -300,6 +302,155 @@ int count_islands(const std::vector<std::vector<int>>& grid) {
   }
 
   return islandCount;
+}
+
+DSU<int> generateLabyrinth(const size_t cols, const size_t rows, char* wallsMain) {
+  srand(time(0));
+  DSU<int> dsu(cols * rows);
+
+  char* walls = new char[rows * cols];
+  const char RIGHT_WALL = 1;
+  const char DOWN_WALL = 2;
+
+  for (int i = 0; i < rows * cols; i++) {
+    walls[i] = 3;
+  }
+
+  // Generate Labyrinth
+  for (int i = 0; i < rows; i++) {
+    int curRowMultNum = i * cols;
+    bool isLastRow = (i == rows - 1);
+    for (int j = 0; j < cols; j++) {
+      bool isLastCol = (j == cols - 1);
+      bool isLastPoint = isLastRow && isLastCol;
+      if (!isLastPoint) {
+        if (rand() % 100 > 25) {
+          if (isLastCol && !isLastRow) {
+            dsu.union_sets(curRowMultNum + j, curRowMultNum + j + rows);
+            walls[curRowMultNum + j] = walls[curRowMultNum + j] & (~DOWN_WALL);
+          } else {
+            dsu.union_sets(curRowMultNum + j, curRowMultNum + j + 1);
+            walls[curRowMultNum + j] = walls[curRowMultNum + j] & (~RIGHT_WALL);
+          }
+        }
+        if (!isLastCol && !isLastRow) {
+          if (rand() % 100 > 25) {
+            dsu.union_sets(curRowMultNum + j, curRowMultNum + j + rows);
+            walls[curRowMultNum + j] = walls[curRowMultNum + j] & (~DOWN_WALL);
+          }
+        }
+      }
+    }
+  }
+
+  for (int i = 0; i < rows * cols; i++) {
+    wallsMain[i] = walls[i];
+  }
+  return dsu;
+}
+
+void generateAndPrintLabyrinth(const size_t cols, const size_t rows) {
+  //srand(time(0));
+  DSU<int> dsu(cols * rows);
+  char* walls = new char[rows * cols];
+  const char RIGHT_WALL = 1;
+  const char DOWN_WALL = 2;
+
+  for (int i = 0; i < rows * cols; i++) {
+    walls[i] = 3;
+  }
+
+  while (!dsu.connected(0, rows * cols - 1)) {
+    dsu = DSU<int>(cols*rows);
+    dsu = generateLabyrinth(cols, rows, walls);
+  }
+
+  // Generate Labyrinth
+  /*for (int i = 0; i < rows; i++) {
+    int curRowMultNum = i * cols;
+    bool isLastRow = (i == rows - 1);
+    for (int j = 0; j < cols; j++) {
+      bool isLastCol = (j == cols - 1);
+      bool isLastPoint = isLastRow && isLastCol;
+      if (!isLastPoint) {
+        if (rand() % 100 > 100) {
+          if (isLastCol && !isLastRow) {
+            dsu.union_sets(curRowMultNum + j, curRowMultNum + j + rows);
+            walls[curRowMultNum + j] = walls[curRowMultNum + j] & (~DOWN_WALL);
+          } else {
+            dsu.union_sets(curRowMultNum + j, curRowMultNum + j + 1);
+            walls[curRowMultNum + j] = walls[curRowMultNum + j] & (~RIGHT_WALL);
+          }
+        }
+        if (!isLastCol && !isLastRow) {
+          if (rand() % 100 > 100) {
+            dsu.union_sets(curRowMultNum + j, curRowMultNum + j + rows);
+            walls[curRowMultNum + j] = walls[curRowMultNum + j] & (~DOWN_WALL);
+          }
+        }
+      }
+    }
+  }*/
+
+  //if (walls[0] == 3) {
+  //  dsu.union_sets(0, rows);
+  //  walls[0] = walls[0] & (~DOWN_WALL);
+  //}
+
+  //if (walls[rows * cols - 1] == 3) {
+  //  dsu.union_sets(rows * cols - 1, rows * cols - 2);
+  //  walls[rows * cols - 1] = walls[rows * cols - 1] & (~RIGHT_WALL);
+  //}
+  std::cout << "+";
+  for (int j = 0; j < cols; j++) {
+    std::cout << "--";
+    std::cout << "+";
+  }
+  std::cout << "\n";
+  for (int i = 0; i < rows; i++) {
+    int curRowMultNum = i * cols;
+    for (int j = 0; j < cols; j++) {
+      if (i == 0 && j == 0) {
+        std::cout << " " << std::setw(2) << " "
+                  /*<< (((curRowMultNum + j) / 10 == 0) ? " " : "")*/
+                  << (walls[curRowMultNum + j] & RIGHT_WALL
+                          ? "|" : " ");
+      } else if (j != cols - 1) {
+        std::cout << ((curRowMultNum + j + 1) % rows == 1 ? "|" : "")
+                  << std::setw(2)
+                  << " "
+                  //<< (((curRowMultNum + j) / 10 == 0) ? " " : "")
+                  << (walls[curRowMultNum + j] & RIGHT_WALL ? "|" : " ");
+      } else if (j == cols - 1) {
+        std::cout << "" << std::setw(2)
+                  << " "
+                  //<< (((curRowMultNum + j) / 10 == 0) ? " " : "")
+                  << (curRowMultNum + j == rows * cols - 1 ? " \n" : "|\n");
+      } else if (j == cols - 1 && i == rows - 1) {
+        std::cout << std::setw(2) << " ";
+                  /*<< (((curRowMultNum + j) / 10 == 0) ? " " : "")
+                  << "";*/
+      }
+    }
+    if (i != rows - 1) {
+      for (int j = 0; j < cols; j++) {
+        if (j == 0) {
+          std::cout << "+";
+        }
+        std::cout << (walls[curRowMultNum + j] & DOWN_WALL
+                          ? "--"
+                          : "  ");
+        std::cout << "+";
+      }
+      std::cout << "\n";
+    } else {
+      std::cout << "+";
+      for (int j = 0; j < cols; j++) {
+        std::cout << "--";
+        std::cout << "+";
+      }
+    }
+  }
 }
 
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_
