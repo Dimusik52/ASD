@@ -27,6 +27,9 @@ add_subdirectory(lib_queuelist)
 add_subdirectory(lib_list)
 add_subdirectory(lib_doublylinkedlist)
 add_subdirectory(lib_dsu)
+add_subdirectory(lib_itable)
+add_subdirectory(lib_unsortedtablem)
+add_subdirectory(lib_unsortedtablel)
 add_subdirectory(lib_algorithms)
 
 
