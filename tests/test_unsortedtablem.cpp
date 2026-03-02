@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include "../lib_unsortedtablem/unsortedtablem.h"
 
-TEST(UnsortedTableTest, InsertAndFind) {
+TEST(UnsortedTableMTest, InsertAndFind) {
   UnsortedTableM<int, std::string> table;
 
   table.insert(1, "one");
@@ -17,7 +17,7 @@ TEST(UnsortedTableTest, InsertAndFind) {
   EXPECT_EQ(table.find(4), nullptr);
 }
 
-TEST(UnsortedTableTest, UpdateExistingKey) {
+TEST(UnsortedTableMTest, UpdateExistingKey) {
   UnsortedTableM<int, std::string> table;
 
   table.insert(1, "one");
@@ -28,7 +28,7 @@ TEST(UnsortedTableTest, UpdateExistingKey) {
   EXPECT_EQ(*val, "ONE");
 }
 
-TEST(UnsortedTableTest, Erase) {
+TEST(UnsortedTableMTest, Erase) {
   UnsortedTableM<int, std::string> table;
 
   table.insert(1, "one");
@@ -42,7 +42,7 @@ TEST(UnsortedTableTest, Erase) {
   table.erase(999);
 }
 
-TEST(UnsortedTableTest, IsEmpty) {
+TEST(UnsortedTableMTest, IsEmpty) {
   UnsortedTableM<int, std::string> table;
 
   EXPECT_TRUE(table.isEmpty());
@@ -54,7 +54,7 @@ TEST(UnsortedTableTest, IsEmpty) {
   EXPECT_TRUE(table.isEmpty());
 }
 
-TEST(UnsortedTableTest, ModifyThroughPointer) {
+TEST(UnsortedTableMTest, ModifyThroughPointer) {
   UnsortedTableM<int, std::string> table;
   table.insert(1, "one");
 
