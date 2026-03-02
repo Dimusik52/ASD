@@ -15,9 +15,9 @@ class UnsortedTableL : public ITable<TKey, TValue> {
   UnsortedTableL() = default;
 
   void insert(const TKey& key, const TValue& value) override {
-    for (size_t i = 0; i < _list.size(); i++) {
-      if (_list[i].first == key) {
-        _list[i].second = value;
+    for (auto it = _list.begin(); it != _list.end(); it++) {
+      if (it->first == key) {
+        it->second = value;
         return;
       }
     }
@@ -25,30 +25,43 @@ class UnsortedTableL : public ITable<TKey, TValue> {
   }
 
   void erase(const TKey& key) override {
-    for (size_t i = 0; i < _list.size(); i++) {
-      if (_list[i].first == key) {
-        _list.erase(i);
+    size_t pos = 0;
+    for (auto it = _list.begin(); it != _list.end(); it++, pos++) {
+      if (it->first == key) {
+        _list.erase(pos);
         return;
       }
     }
   }
 
   TValue* find(const TKey& key) noexcept override {
-    for (size_t i = 0; i < _list.size(); i++) {
-      if (_list[i].first == key) {
-        return &_list[i].;
+    for (auto it = _list.begin(); it != _list.end(); it++) {
+      if (it->first == key) {
+        return &(it->second);
       }
     }
     return nullptr;
   }
 
-  bool isEmpty() const noexcept override { return _list.empty(); }
+  bool isEmpty() const noexcept override {
+    return const_cast<List<std::pair<TKey, TValue>>&>(_list).is_empty();
+  }
 
   void print(std::ostream& out) const override {
-    out << "UnsortedTableL (" << _list.size() << " rows):\n";
-    for (size_t i = 0; i < _list.size(); ++i) {
-      out << "  " << _list[i].first << " -> " << _list[i].second << "\n";
+    out << "UnsortedTableL (" << size() <<"):\n";
+    auto& mutableList = const_cast<List<std::pair<TKey, TValue>>&>(_list);
+    for (auto it = mutableList.begin(); it != mutableList.end(); ++it) {
+      out << "  " << it->first << " -> " << it->second << "\n";
     }
+  }
+
+  size_t size() const {
+    size_t count = 0;
+    auto& mutableList = const_cast<List<std::pair<TKey, TValue>>&>(_list);
+    for (auto it = mutableList.begin(); it != mutableList.end(); ++it) {
+      ++count;
+    }
+    return count;
   }
 };
 
