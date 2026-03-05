@@ -55,6 +55,14 @@ class UnsortedTableL : public ITable<TKey, TValue> {
     }
   }
 
+  bool contains(const TKey& key) const noexcept override {
+    auto& mutableList = const_cast<List<std::pair<TKey, TValue>>&>(_list);
+    for (auto it = mutableList.begin(); it != mutableList.end(); ++it) {
+      if (it->first == key) return true;
+    }
+    return false;
+  }
+
   size_t size() const {
     size_t count = 0;
     auto& mutableList = const_cast<List<std::pair<TKey, TValue>>&>(_list);

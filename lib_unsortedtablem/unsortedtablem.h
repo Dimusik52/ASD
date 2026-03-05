@@ -44,6 +44,15 @@ class UnsortedTableM : public ITable<TKey, TValue> {
 
   bool isEmpty() const noexcept override { return _rows.is_empty(); }
 
+  bool contains(const TKey& key) const noexcept override {
+    for (size_t i = 0; i < _rows.size(); i++) {
+      if (_rows[i].first == key) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void print(std::ostream& out) const override {
     out << "UnsortedTableM (" << _rows.size() << " rows):\n";
     for (size_t i = 0; i < _rows.size(); i++) {

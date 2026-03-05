@@ -16,6 +16,8 @@ class ITable {
 
   virtual void print(std::ostream& out) const = 0;
 
+  virtual bool contains(const TKey&) const noexcept = 0;
+
   friend std::ostream& operator<<(std::ostream& out, const ITable& table) {
     table.print(out);
     return out;
