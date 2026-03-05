@@ -66,3 +66,12 @@ TEST(UnsortedTableLTest, ModifyThroughPointer) {
   auto* check = table.find(1);
   EXPECT_EQ(*check, "modified");
 }
+
+TEST(UnsortedTableLTest, Contains) {
+  UnsortedTableL<int, std::string> table;
+
+  table.insert(1, "one");
+
+  EXPECT_TRUE(table.contains(1));
+  EXPECT_FALSE(table.contains(2));
+}
