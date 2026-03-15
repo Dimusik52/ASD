@@ -14,30 +14,27 @@ class UnsortedTableM : public ITable<TKey, TValue> {
   UnsortedTableM() = default;
 
   void insert(const TKey& key, const TValue& value) override {
-    for (size_t i = 0; i < _rows.size(); i++) {
-      if (_rows[i].first == key) {
-        _rows[i].second = value;
-        return;
-      }
+    int pos = findPos(key);
+    if (pos != -1) {
+      _rows[pos].second = value;
+      return;
     }
 
     _rows.push_back({key, value});
   }
 
   void erase(const TKey& key) override {
-    for (size_t i = 0; i < _rows.size(); i++) {
-      if (_rows[i].first == key) {
-        _rows.erase(i);
-        return;
-      }
+    int pos = findPos(key);
+    if (pos != -1) {
+      _rows.erase(pos);
+      return;
     }
   }
 
   TValue* find(const TKey& key) noexcept override {
-    for (size_t i = 0; i < _rows.size(); i++) {
-      if (_rows[i].first == key) {
-        return &_rows[i].second;
-      }
+    int pos = findPos(key);
+    if (pos != -1) {
+      return &_rows[pos].second;
     }
     return nullptr;
   }
@@ -45,10 +42,9 @@ class UnsortedTableM : public ITable<TKey, TValue> {
   bool isEmpty() const noexcept override { return _rows.is_empty(); }
 
   bool contains(const TKey& key) const noexcept override {
-    for (size_t i = 0; i < _rows.size(); i++) {
-      if (_rows[i].first == key) {
-        return true;
-      }
+    int pos = findPos(key);
+    if (pos != -1) {
+      return true;
     }
     return false;
   }
@@ -58,6 +54,16 @@ class UnsortedTableM : public ITable<TKey, TValue> {
     for (size_t i = 0; i < _rows.size(); i++) {
       out << "  " << _rows[i].first << " -> " << _rows[i].second << "\n";
     }
+  }
+
+  private:
+  int findPos(const TKey& key) {
+    for (size_t i = 0; i < _rows.size(); i++) {
+      if (_rows[i].first == key) {
+        return i;
+      }
+    }
+    return -1;
   }
 };
 
