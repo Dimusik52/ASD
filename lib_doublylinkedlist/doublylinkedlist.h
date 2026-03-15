@@ -22,6 +22,7 @@ class DoublyLinkedList {
   ~DoublyLinkedList();
 
   bool is_empty();
+  bool is_empty() const;
   void push_front(const T& value) noexcept;
   void push_back(const T& value) noexcept;
   void insert_after(Node* node, const T& value);
@@ -111,10 +112,98 @@ class DoublyLinkedList {
       return *this;
     }
   };
+
+  class ConstIterator {
+    const Node* _current;
+
+   public:
+    ConstIterator() : _current(nullptr) {}
+    ConstIterator(const Node* node) : _current(node) {}
+
+    ConstIterator(const Iterator& it) : _current(it.get_node()) {}
+
+    const Node* get_node() const { return _current; }
+
+    ConstIterator& operator=(const ConstIterator& other) noexcept {
+      _current = other._current;
+      return *this;
+    }
+
+    ConstIterator& operator++() noexcept {
+      if (_current != nullptr) {
+        _current = _current->next;
+      }
+      return *this;
+    }
+
+    ConstIterator operator++(int) noexcept {
+      ConstIterator temp = *this;
+      ++(*this);
+      return temp;
+    }
+
+    ConstIterator& operator--() noexcept {
+      if (_current != nullptr) {
+        _current = _current->prev;
+      }
+      return *this;
+    }
+
+    ConstIterator operator--(int) noexcept {
+      ConstIterator temp = *this;
+      --(*this);
+      return temp;
+    }
+
+    bool operator!=(const ConstIterator& other) const noexcept {
+      return _current != other._current;
+    }
+
+    bool operator==(const ConstIterator& other) const noexcept {
+      return _current == other._current;
+    }
+
+    // ВАЖНО: возвращаем const T&
+    const T& operator*() const {
+      if (_current == nullptr) {
+        throw std::runtime_error(
+            "DoublyLinkedList::ConstIterator.operator*(): Dereferencing end "
+            "iterator");
+      }
+      return _current->value;
+    }
+
+    const T* operator->() const {
+      if (_current == nullptr) {
+        throw std::runtime_error(
+            "DoublyLinkedList::ConstIterator.operator->(): Accessing end "
+            "iterator");
+      }
+      return &(_current->value);
+    }
+
+    ConstIterator& operator+=(size_t n) {
+      for (size_t i = 0; i < n && _current != nullptr; ++i) {
+        _current = _current->next;
+      }
+      return *this;
+    }
+
+    ConstIterator& operator-=(size_t n) {
+      for (size_t i = 0; i < n && _current != nullptr; ++i) {
+        _current = _current->prev;
+      }
+      return *this;
+    }
+  };
+
   inline Iterator begin();
   inline Iterator end();
   inline Iterator rbegin();
   inline Iterator rend();
+
+  ConstIterator begin() const { return ConstIterator(head); }
+  ConstIterator end() const { return ConstIterator(nullptr); }
 };
 
 template <class T>
@@ -141,6 +230,11 @@ DoublyLinkedList<T>::~DoublyLinkedList() {
 
 template <class T>
 bool DoublyLinkedList<T>::is_empty() {
+  return _head == nullptr;
+}
+
+template <class T>
+bool DoublyLinkedList<T>::is_empty() const {
   return _head == nullptr;
 }
 
