@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
-#define ASD
+#define SKIPLIST
 #ifdef EASY_EXAMPLE
 
 #include <iostream>
@@ -324,6 +324,25 @@ void main() {
 
   generateAndPrintLabyrinth(10, 10);
  
+}
+
+#endif
+
+#ifdef SKIPLIST
+#include "../lib_skiplist/skiplist.h"
+
+void main() {
+  SkipList<int, std::string> skipList(5);
+
+  skipList.insert(3, "three");
+  skipList.insert(7, "seven");
+  skipList.insert(1, "one");
+  skipList.insert(9, "nine");
+  skipList.insert(4, "four");
+  skipList.insert(5, "five");
+  skipList.insert(2, "two");
+
+  skipList.print();
 }
 
 #endif
