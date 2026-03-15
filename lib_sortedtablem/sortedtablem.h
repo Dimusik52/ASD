@@ -29,7 +29,7 @@ class SortedTableM : public ITable<TKey, TValue> {
 
   size_t findInsertPosition(const TKey& key) const {
     size_t left = 0;
-    size_t right = _rows.size();
+    size_t right = _rows.size() + 1;
 
     while (left < right) {
       size_t mid = left + (right - left) / 2;

@@ -31,6 +31,7 @@ add_subdirectory(lib_itable)
 add_subdirectory(lib_unsortedtablem)
 add_subdirectory(lib_unsortedtablel)
 add_subdirectory(lib_sortedtablem)
+add_subdirectory(lib_skiplist)
 add_subdirectory(lib_algorithms)
 
 

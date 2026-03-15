@@ -13,58 +13,77 @@ class UnsortedTableM : public ITable<TKey, TValue> {
  public:
   UnsortedTableM() = default;
 
-  void insert(const TKey& key, const TValue& value) override {
-    int pos = findPos(key);
-    if (pos != -1) {
-      _rows[pos].second = value;
-      return;
-    }
+  void insert(const TKey& key, const TValue& value) override;
 
-    _rows.push_back({key, value});
-  }
+  void erase(const TKey& key) override;
 
-  void erase(const TKey& key) override {
-    int pos = findPos(key);
-    if (pos != -1) {
-      _rows.erase(pos);
-      return;
-    }
-  }
-
-  TValue* find(const TKey& key) noexcept override {
-    int pos = findPos(key);
-    if (pos != -1) {
-      return &_rows[pos].second;
-    }
-    return nullptr;
-  }
+  TValue* find(const TKey& key) noexcept override;
 
   bool isEmpty() const noexcept override { return _rows.is_empty(); }
 
-  bool contains(const TKey& key) const noexcept override {
-    int pos = findPos(key);
-    if (pos != -1) {
-      return true;
-    }
-    return false;
-  }
+  bool contains(const TKey& key) const noexcept override;
 
-  void print(std::ostream& out) const override {
-    out << "UnsortedTableM (" << _rows.size() << " rows):\n";
-    for (size_t i = 0; i < _rows.size(); i++) {
-      out << "  " << _rows[i].first << " -> " << _rows[i].second << "\n";
-    }
-  }
+  void print(std::ostream& out) const override;
 
   private:
-  int findPos(const TKey& key) {
-    for (size_t i = 0; i < _rows.size(); i++) {
-      if (_rows[i].first == key) {
-        return i;
-      }
-    }
-    return -1;
-  }
+  int findPos(const TKey& key) const noexcept;
 };
+
+template<class TKey, class TValue>
+void UnsortedTableM<TKey, TValue>::insert(const TKey& key,
+  const TValue& value) {
+  int pos = findPos(key);
+  if (pos != -1) {
+    _rows[pos].second = value;
+    return;
+  }
+
+  _rows.push_back({key, value});
+}
+
+template<class TKey, class TValue>
+void UnsortedTableM<TKey, TValue>::erase(const TKey& key) {
+  int pos = findPos(key);
+  if (pos != -1) {
+    _rows.erase(pos);
+    return;
+  }
+}
+
+template <class TKey, class TValue>
+TValue* UnsortedTableM<TKey, TValue>::find(const TKey& key) noexcept {
+  int pos = findPos(key);
+  if (pos != -1) {
+    return &_rows[pos].second;
+  }
+  return nullptr;
+}
+
+template <class TKey, class TValue>
+bool UnsortedTableM<TKey, TValue>::contains(const TKey& key) const noexcept {
+  int pos = findPos(key);
+  if (pos != -1) {
+    return true;
+  }
+  return false;
+}
+
+template <class TKey, class TValue>
+void UnsortedTableM<TKey, TValue>::print(std::ostream& out) const {
+  out << "UnsortedTableM (" << _rows.size() << " rows):\n";
+  for (size_t i = 0; i < _rows.size(); i++) {
+    out << "  " << _rows[i].first << " -> " << _rows[i].second << "\n";
+  }
+}
+
+template <class TKey, class TValue>
+int UnsortedTableM<TKey, TValue>::findPos(const TKey& key) const noexcept {
+  for (size_t i = 0; i < _rows.size(); i++) {
+    if (_rows[i].first == key) {
+      return i;
+    }
+  }
+  return -1;
+}
 
 #endif  // LIB_UNSORTEDTABLEM_UNSORTEDTABLEM_H_
