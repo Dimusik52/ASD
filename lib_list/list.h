@@ -93,8 +93,71 @@ class List {
     }
   };
 
+  class ConstIterator {
+    const Node* _current;
+
+   public:
+    ConstIterator() : _current(nullptr) {}
+    ConstIterator(const Node* node) : _current(node) {}
+
+    ConstIterator(const Iterator& it) : _current(it.get_node()) {}
+
+    const Node* get_node() const { return _current; }
+
+    ConstIterator& operator=(const ConstIterator& other) noexcept {
+      _current = other._current;
+      return *this;
+    }
+
+    ConstIterator& operator++() noexcept {
+      if (_current != nullptr) {
+        _current = _current->next;
+      }
+      return *this;
+    }
+
+    ConstIterator operator++(int) noexcept {
+      ConstIterator temp = *this;
+      ++(*this);
+      return temp;
+    }
+
+    bool operator!=(const ConstIterator& other) const noexcept {
+      return _current != other._current;
+    }
+
+    bool operator==(const ConstIterator& other) const noexcept {
+      return _current == other._current;
+    }
+
+    const T& operator*() const {
+      if (_current == nullptr) {
+        throw std::runtime_error(
+            "List::ConstIterator.operator*(): Dereferencing end iterator");
+      }
+      return _current->value;
+    }
+
+    const T* operator->() const {
+      if (_current == nullptr) {
+        throw std::runtime_error(
+            "List::ConstIterator.operator->(): Accessing end iterator");
+      }
+      return &(_current->value);
+    }
+
+    ConstIterator& operator+=(size_t n) {
+      for (size_t i = 0; i < n && _current != nullptr; ++i) {
+        _current = _current->next;
+      }
+      return *this;
+    }
+  };
+
   inline Iterator begin();
   inline Iterator end();
+  ConstIterator begin() const { return ConstIterator(_head); }
+  ConstIterator end() const { return ConstIterator(nullptr); }
 };
 
 template <class T>
