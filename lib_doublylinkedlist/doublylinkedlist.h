@@ -34,6 +34,8 @@ class DoublyLinkedList {
   void erase(Node* node);
   void clear();
 
+  DoublyLinkedList& operator=(const DoublyLinkedList<T>& other);
+
   class Iterator {
     Node* _current;
 
@@ -223,7 +225,7 @@ DoublyLinkedList<T>::DoublyLinkedList(const DoublyLinkedList<T>& other)
 template <class T>
 DoublyLinkedList<T>::~DoublyLinkedList() {
   clear();
-  }
+}
 
 template <class T>
 bool DoublyLinkedList<T>::is_empty() {
@@ -425,6 +427,21 @@ void DoublyLinkedList<T>::clear() {
   }
 }
 
+template <class T>
+DoublyLinkedList<T>& DoublyLinkedList<T>::operator=(const DoublyLinkedList<T>& other) {
+  if (this != &other) {
+    clear();
+
+    Node* current = other._head;
+    while (current != nullptr) {
+      push_back(current->value);
+      current = current->next;
+    }
+  }
+  return *this;
+}
+
+template <class T>
 inline typename DoublyLinkedList<T>::Iterator DoublyLinkedList<T>::begin() {
   return Iterator(_head);
 }
