@@ -202,7 +202,7 @@ class DoublyLinkedList {
   inline Iterator rbegin();
   inline Iterator rend();
 
-  ConstIterator begin() const { return ConstIterator(head); }
+  ConstIterator begin() const { return ConstIterator(_head); }
   ConstIterator end() const { return ConstIterator(nullptr); }
 };
 
