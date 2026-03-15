@@ -29,9 +29,9 @@ class UnsortedTableM : public ITable<TKey, TValue> {
   int findPos(const TKey& key) const noexcept;
 };
 
-template<class TKey, class TValue>
+template <class TKey, class TValue>
 void UnsortedTableM<TKey, TValue>::insert(const TKey& key,
-  const TValue& value) {
+                                          const TValue& value) {
   int pos = findPos(key);
   if (pos != -1) {
     _rows[pos].second = value;
@@ -41,7 +41,7 @@ void UnsortedTableM<TKey, TValue>::insert(const TKey& key,
   _rows.push_back({key, value});
 }
 
-template<class TKey, class TValue>
+template <class TKey, class TValue>
 void UnsortedTableM<TKey, TValue>::erase(const TKey& key) {
   int pos = findPos(key);
   if (pos != -1) {
