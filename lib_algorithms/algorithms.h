@@ -10,6 +10,7 @@
 #include "../lib_stack/stack.h"
 #include "../lib_list/list.h"
 #include "../lib_dsu/dsu.h"
+#include "../lib_binarytree/binarytree.h"
 
 template <class T>
 class List;
@@ -453,4 +454,16 @@ void generateAndPrintLabyrinth(const size_t cols, const size_t rows) {
   }
 }
 
+
+void fillAndPrintBinaryTree() {
+  int mass[14] = {6, 2, 1, 3, 9, 7, 15, 11, 18, 14, 100, 67, 98, 54};
+
+  BSTree<int, int> bTree;
+
+  for (int i = 0; i < 14; i++) {
+    bTree.insert(mass[i], mass[i]);
+  }
+
+  bTree.print();
+}
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_
