@@ -1,6 +1,6 @@
 // Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
-#define SKIPLIST
+#define ALGORITHMS
 #ifdef EASY_EXAMPLE
 
 #include <iostream>
@@ -322,7 +322,8 @@ void main() {
   //  std::cerr << e.what();
   //}
 
-  generateAndPrintLabyrinth(10, 10);
+  //generateAndPrintLabyrinth(10, 10);
+  fillAndPrintBinaryTree();
  
 }
 
