@@ -323,7 +323,8 @@ void main() {
   //}
 
   //generateAndPrintLabyrinth(10, 10);
-  fillAndPrintBinaryTree();
+  //fillAndPrintBinaryTree();
+  fillAndPrintHeap();
  
 }
 
