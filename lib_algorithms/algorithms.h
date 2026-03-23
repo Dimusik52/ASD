@@ -11,6 +11,7 @@
 #include "../lib_list/list.h"
 #include "../lib_dsu/dsu.h"
 #include "../lib_binarytree/binarytree.h"
+#include "../lib_heap/heap.h"
 
 template <class T>
 class List;
@@ -465,5 +466,19 @@ void fillAndPrintBinaryTree() {
   }
 
   bTree.print();
+}
+
+void fillAndPrintHeap() {
+  int mass[14] = {6, 2, 1, 3, 9, 7, 15, 11, 18, 14, 100, 67, 98, 54};
+  Heap<int, int> heap;
+
+  for (size_t i = 0; i < 14; i++) {
+    heap.insert(mass[i], mass[i]);
+  }
+  heap.print();
+  while (!heap.empty()) {
+    auto root = heap.extract();
+    std::cout << root.first << ":" << root.second << " ";
+  }
 }
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_
