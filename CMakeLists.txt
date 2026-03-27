@@ -32,6 +32,10 @@ add_subdirectory(lib_unsortedtablem)
 add_subdirectory(lib_unsortedtablel)
 add_subdirectory(lib_sortedtablem)
 add_subdirectory(lib_skiplist)
+add_subdirectory(lib_monom)
+add_subdirectory(lib_polynom)
+add_subdirectory(lib_binarytree)
+add_subdirectory(lib_heap)
 add_subdirectory(lib_algorithms)
 
 
