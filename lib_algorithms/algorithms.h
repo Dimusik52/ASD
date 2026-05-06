@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
+﻿// Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
 
 #ifndef LIB_ALGORITHMS_ALGORITHMS_H_
 #define LIB_ALGORITHMS_ALGORITHMS_H_
@@ -6,12 +6,19 @@
 #include <format>
 #include <iostream>
 #include <iomanip>
+#include <string>
+#include <limits>
+#include <unordered_map>
+#include <vector>
 #include "../lib_matrix/matrix.h"
 #include "../lib_stack/stack.h"
 #include "../lib_list/list.h"
 #include "../lib_dsu/dsu.h"
 #include "../lib_binarytree/binarytree.h"
 #include "../lib_heap/heap.h"
+#include "../lib_prqueue/prqueue.h"
+#include "../lib_hashtablec/hashtablec.h"
+#include "../lib_graphveclist/graphveclist.h"
 
 template <class T>
 class List;
@@ -480,5 +487,360 @@ void fillAndPrintHeap() {
     auto root = heap.extract();
     std::cout << root.first << ":" << root.second << " ";
   }
+}
+
+void fillAndPrintPriorityQueue() {
+  std::vector<std::pair<int, char>> vec;
+
+  srand(time(0));
+
+  for (int i = 0; i < 20; i++) {
+    size_t num = rand() % 6;
+    char c = 'A' + rand() % ('Z' - 'A' + 1);
+    vec.push_back({num, c});
+  }
+
+  PriorityQueue<int, char> queue;
+
+  for (int i = 0; i < vec.size(); i++) {
+    queue.enqueue(vec[i].first, vec[i].second);
+    std::cout << vec[i].first << ":" << vec[i].second << " ";
+  }
+  std::cout << "\n";
+
+  size_t numK = 5;
+
+  queue.print();
+  if (numK >= queue.size()) numK = queue.size();
+
+  for (int i = 0; i < numK; i++) {
+    std::pair<int, char> pair = queue.dequeue();
+    std::cout << pair.first << ":" << pair.second << " ";
+  }
+}
+
+void uniteTwoDictsAndPrint() {
+  std::vector<std::pair<std::string, int>> dict1 = {
+      {"key1", 1}, {"key2", 2}, {"key3", 3}, {"key4", 4}};
+  std::vector<std::pair<std::string, int>> dict2 = {
+      {"key4", 0},
+      {"key6", 6},
+      {"key9", 9},
+      {"key1", 3},
+      {"key2", 10},
+  };
+  HashTableC<int> hashtable;
+  for (size_t i = 0; i < dict1.size(); i++) {
+    hashtable.insert(dict1[i].first, dict1[i].second);
+  }
+  std::cout << hashtable;
+  std::cout << "---------\n";
+  for (size_t i = 0; i < dict2.size(); i++) {
+    try {
+      hashtable.insert(dict2[i].first, dict2[i].second);
+    } catch (...) {
+    }
+  }
+  std::cout << hashtable;
+}
+
+void createAndPrintGraph() {
+  GraphVecList<int> graph(false, true);
+  graph.addEdge(0, 3);
+  graph.addEdge(0, 5);
+  graph.addEdge(1, 2);
+  graph.addEdge(1, 4);
+  graph.addEdge(2, 3);
+  graph.addEdge(2, 4);
+  graph.addEdge(2, 5);
+  graph.addEdge(3, 6);
+  graph.addEdge(4, 6);
+
+  graph.printGraph();
+}
+
+template <class T>
+std::pair<HashTableC<int>, HashTableC<std::string>> dijkstra(
+    const GraphVecList<T>& graph,
+                                    const T& start) {
+  if (!graph.vertexExists(start)) {
+    throw std::runtime_error("Start vertex not found");
+  }
+
+  HashTableC<int> distances(2000);
+
+  HashTableC<std::string> previous(2000);
+
+  PriorityQueue<int, T> pq;
+
+  const int INF = std::numeric_limits<int>::max();
+
+  auto vertices = graph.getAllVertices();
+  for (const auto& vertex : vertices) {
+    try {
+      distances.insert(vertex, INF);
+    } catch (...) {
+    }
+  }
+
+  try {
+    distances.insert(start, 0);
+  } catch (const std::logic_error&) {
+    distances.erase(start);
+    distances.insert(start, 0);
+  }
+  pq.enqueue(0, start);
+
+   while (!pq.empty()) {
+    std::pair<int, T> currentPair = pq.dequeue();
+    int currentDist = currentPair.first;
+    T current = currentPair.second;
+
+    int* currentDistPtr = distances.find(current);
+    if (!currentDistPtr || currentDist > *currentDistPtr) {
+      continue;
+    }
+
+    auto neighbors = graph.getNeighbors(current);
+    for (size_t i = 0; i < neighbors.size(); i++) {
+      const T& neighbor = neighbors[i].first;
+      int weight = neighbors[i].second;
+
+      int newDist = currentDist + weight;
+
+      int* neighborDistPtr = distances.find(neighbor);
+      if (!neighborDistPtr) {
+        try {
+          distances.insert(neighbor, newDist);
+          previous.insert(neighbor, current);
+          pq.enqueue(newDist, neighbor);
+        } catch (...) {
+        }
+        continue;
+      }
+
+      if (newDist < *neighborDistPtr) {
+        distances.erase(neighbor);
+        distances.insert(neighbor, newDist);
+
+        try {
+          previous.insert(neighbor, current);
+        } catch (const std::logic_error&) {
+          previous.erase(neighbor);
+          previous.insert(neighbor, current);
+        }
+
+        pq.enqueue(newDist, neighbor);
+      }
+    }
+   }
+
+  return {distances, previous};
+}
+
+template <class T>
+std::vector<T> dijkstraFindPath(HashTableC<std::string>& previous, const T& start,
+                        const T& end) {
+  std::vector<T> path;
+  if (start == end) {
+    path.push_back(start);
+    return path;
+  }
+
+  T current = end;
+
+  while (current != start) {
+    path.push_back(current);
+
+    std::string* prev = previous.find(current);
+    if (!prev) {
+      return {};
+    }
+    current = *prev;
+  }
+  path.push_back(start);
+
+  std::reverse(path.begin(), path.end());
+  return path;
+}
+
+
+void createAndDoDijkstraAlgorithm() {
+  GraphVecList<std::string> graph(false, true);
+  graph.addEdge("A", "B", 4);
+  graph.addEdge("A", "C", 2);
+  graph.addEdge("B", "C", 1);
+  graph.addEdge("B", "D", 5);
+  graph.addEdge("C", "D", 3);
+  graph.addEdge("C", "E", 10);
+  graph.addEdge("D", "E", 2);
+  graph.printGraph();
+  auto pair = dijkstra(graph, std::string("A"));
+  auto distances = pair.first;
+  auto previous = pair.second;
+  std::vector<std::string> path =
+      dijkstraFindPath(previous, std::string("A"), std::string("E"));
+
+  std::cout << "Path from A to E: ";
+  for (size_t i = 0; i < path.size(); i++) {
+    if (i > 0) std::cout << " -> ";
+    std::cout << path[i];
+  }
+  std::cout << std::endl;
+
+  int* dist = distances.find("E");
+  std::cout << "Distance: " << *dist << std::endl;
+}
+
+const char RIGHT_WALL = 1;
+const char DOWN_WALL = 2;
+
+std::string cellToVertex(int row, int col, int cols) {
+  return std::to_string(row * cols + col);
+}
+
+std::pair<int, int> vertexToCoords(const std::string& vertex, int cols) {
+  int v = std::stoi(vertex);
+  return {v / cols, v % cols};
+}
+
+GraphVecList<std::string> buildGraph(char* walls, size_t cols, size_t rows) {
+  GraphVecList<std::string> graph(false, true);
+
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      graph.addVertex(cellToVertex(i, j, cols));
+    }
+  }
+
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      std::string curr = cellToVertex(i, j, cols);
+
+      if (!(walls[std::stoi(curr)] & RIGHT_WALL) && j + 1 < cols) {
+        std::string right = cellToVertex(i, j + 1, cols);
+        if (!graph.edgeExists(curr, right)) {
+          graph.addEdge(curr, right, 1);
+        }
+      }
+
+      if (!(walls[std::stoi(curr)] & DOWN_WALL) && i + 1 < rows) {
+        std::string down = cellToVertex(i + 1, j, cols);
+        if (!graph.edgeExists(curr, down)) {
+          graph.addEdge(curr, down, 1);
+        }
+      }
+    }
+  }
+
+  return graph;
+}
+
+
+std::vector<int> pathToInt(const std::vector<std::string>& strPath) {
+  std::vector<int> path;
+  for (const auto& v : strPath) {
+    path.push_back(std::stoi(v));
+  }
+  return path;
+}
+
+void printLabyrinthWithPath(char* walls, size_t cols, size_t rows,
+                            const std::vector<int>& path) {
+  std::vector<std::vector<bool>> isPath(rows, std::vector<bool>(cols, false));
+  for (int v : path) {
+    auto pair = vertexToCoords(std::to_string(v), cols);
+    auto row = pair.first;
+    auto col = pair.second;
+    if (row >= 0 && row < rows && col >= 0 && col < cols) {
+      isPath[row][col] = true;
+    }
+  }
+
+  std::cout << "+";
+  for (int j = 0; j < cols; j++) {
+    std::cout << "--+";
+  }
+  std::cout << "\n";
+
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      std::string curr = cellToVertex(i, j, cols);
+      int currIdx = std::stoi(curr);
+
+      if (j == 0) {
+        std::cout << ((i == 0) ? " " : "|");
+      }
+
+      if (isPath[i][j]) {
+        std::cout << "* ";
+      } else {
+        std::cout << "  ";
+      }
+
+      std::cout << ((walls[currIdx] & RIGHT_WALL) ? "|" : " ");
+
+    }
+    std::cout << "\n";
+
+    if (i != rows - 1) {
+      std::cout << "+";
+      for (int j = 0; j < cols; j++) {
+        std::string curr = cellToVertex(i, j, cols);
+        int currIdx = std::stoi(curr);
+        std::cout << ((walls[currIdx] & DOWN_WALL) ? "--" : "  ");
+        std::cout << "+";
+      }
+      std::cout << "\n";
+    }
+  }
+
+  std::cout << "+";
+  for (int j = 0; j < cols; j++) {
+    std::cout << "--+";
+  }
+  std::cout << "\n";
+}
+
+void generateAndPrintPath(const size_t cols, const size_t rows) {
+  DSU<int> dsu(cols * rows);
+  char* walls = new char[rows * cols];
+
+  for (int i = 0; i < rows * cols; i++) {
+    walls[i] = RIGHT_WALL | DOWN_WALL;
+  }
+
+  while (!dsu.connected(0, rows * cols - 1)) {
+    dsu = DSU<int>(cols * rows);
+    dsu = generateLabyrinth(cols, rows, walls);
+  }
+
+  auto graph = buildGraph(walls, cols, rows);
+
+  std::string start = cellToVertex(0, 0, cols);
+  std::string end = cellToVertex(rows - 1, cols - 1, cols);
+
+  auto pair = dijkstra(graph, start);
+  auto distances = pair.first;
+  auto previous = pair.second;
+
+  std::vector<std::string> strPath = dijkstraFindPath(previous, start, end);
+
+  std::vector<int> path = pathToInt(strPath);
+
+  if (!path.empty()) {
+    for (size_t i = 0; i < path.size(); i++) {
+      auto pair = vertexToCoords(std::to_string(path[i]), cols);
+      auto row = pair.first;
+      auto col = pair.second;
+      std::cout << path[i] << "(" << row << "," << col << ")";
+      if (i < path.size() - 1) std::cout << " -> ";
+    }
+    std::cout << "\n\n";
+
+    printLabyrinthWithPath(walls, cols, rows, path);
+  }
+
+  delete[] walls;
 }
 #endif  // LIB_ALGORITHMS_ALGORITHMS_H_
