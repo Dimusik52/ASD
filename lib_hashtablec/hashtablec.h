@@ -18,6 +18,7 @@ class HashTableC : public ITable<std::string, TValue> {
   };
   std::vector<List<HashData>> _rows;
   size_t _size;
+  size_t _elementCount;
  public:
   HashTableC();
   HashTableC(size_t size);
@@ -36,13 +37,13 @@ class HashTableC : public ITable<std::string, TValue> {
 };
 
 template <class TValue>
-HashTableC<TValue>::HashTableC() : _size(100) {
-  for (size_t i = 0; i < 100; i++) {
+HashTableC<TValue>::HashTableC() : _size(10000), _elementCount(0) {
+  for (size_t i = 0; i < _size; i++) {
     _rows.push_back(List<HashData>());
   }
 }
 template <class TValue>
-HashTableC<TValue>::HashTableC(size_t size) : _size(size) {
+HashTableC<TValue>::HashTableC(size_t size) : _size(size), _elementCount(0) {
   for (size_t i = 0; i < size; i++) {
     _rows.push_back(List<HashData>());
   }
@@ -72,6 +73,7 @@ void HashTableC<TValue>::insert(const std::string& key, const TValue& value) {
     throw std::logic_error("Key already exists!");
   }
   _rows[hash].push_back(HashData(key, value));
+  _elementCount++;
 }
 
 template <class TValue>
@@ -81,6 +83,7 @@ void HashTableC<TValue>::erase(const std::string& key) {
   for (auto it = _rows[hash].begin(); it != _rows[hash].end(); it++) {
     if (it.get_node()->value._key == key) {
       _rows[hash].erase(it.get_node());
+      _elementCount--;
       return;
     }
   }
@@ -101,7 +104,7 @@ TValue* HashTableC<TValue>::find(const std::string& key) noexcept {
 
 template <class TValue>
 bool HashTableC<TValue>::isEmpty() const noexcept {
-  return _rows.empty();
+  return _elementCount == 0;
 }
 template <class TValue>
 bool HashTableC<TValue>::contains(const std::string& key) const noexcept {
