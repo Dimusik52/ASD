@@ -322,10 +322,14 @@ void main() {
   //  std::cerr << e.what();
   //}
 
-  //generateAndPrintLabyrinth(10, 10);
+  //generateAndPrintLabyrinth(4, 4);
   //fillAndPrintBinaryTree();
-  fillAndPrintHeap();
- 
+  //fillAndPrintHeap();
+  //fillAndPrintPriorityQueue();
+  //uniteTwoDictsAndPrint();
+  //createAndPrintGraph();
+  //createAndDoDijkstraAlgorithm();
+  generateAndPrintPath(4, 4);
 }
 
 #endif
