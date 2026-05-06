@@ -21,6 +21,7 @@ class HashTableC : public ITable<std::string, TValue> {
  public:
   HashTableC();
   HashTableC(size_t size);
+  HashTableC(const HashTableC& other);
 
   void insert(const std::string&, const TValue&) override;
   void erase(const std::string&) override;
@@ -44,6 +45,16 @@ template <class TValue>
 HashTableC<TValue>::HashTableC(size_t size) : _size(size) {
   for (size_t i = 0; i < size; i++) {
     _rows.push_back(List<HashData>());
+  }
+}
+
+template <class TValue>
+HashTableC<TValue>::HashTableC(const HashTableC& other) {
+  for (size_t i = 0; i < other._rows.size(); i++) {
+    _rows.push_back(List<HashData>());
+    for (auto it = other._rows[i].begin(); it != other._rows[i].end(); ++it) {
+      _rows[i].push_back(*it);
+    }
   }
 }
 
