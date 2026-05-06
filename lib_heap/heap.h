@@ -20,7 +20,13 @@ class Heap {
   std::pair<TKey, TValue> extract();
   void print() const noexcept;
 
+  std::pair<TKey, TValue>& top() const {
+    if (empty()) throw std::logic_error("Heap is empty!");
+    return _data[0];
+  }
   bool empty() const noexcept { return _data.empty(); }
+
+  size_t size() const { return _data.size(); }
 };
 template <class TKey, class TValue>
 void Heap<TKey, TValue>::insert(const TKey& key, const TValue& value) noexcept {
