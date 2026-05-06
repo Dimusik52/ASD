@@ -36,6 +36,9 @@ add_subdirectory(lib_monom)
 add_subdirectory(lib_polynom)
 add_subdirectory(lib_binarytree)
 add_subdirectory(lib_heap)
+add_subdirectory(lib_prqueue)
+add_subdirectory(lib_hashtablec)
+add_subdirectory(lib_graphveclist)
 add_subdirectory(lib_algorithms)
 
 
