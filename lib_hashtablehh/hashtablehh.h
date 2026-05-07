@@ -3,6 +3,7 @@
 #ifndef LIB_HASHTABLEHH_HASHTABLEHH_H_
 #define LIB_HASHTABLEHH_HASHTABLEHH_H_
 #include <iostream>
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -30,7 +31,11 @@ class HashTableHH : public ITable<std::string, TValue> {
   size_t _shift;
   size_t _elementCount;
 
-  bool isPrime(size_t n) const noexcept;
+  size_t gcd(size_t a, size_t b) const noexcept;
+
+  bool isMutuallyPrime(size_t a, size_t b) const noexcept {
+    return gcd(a, b) == 1;
+  }
 
   size_t h(const std::string& key) const noexcept;
 
@@ -64,15 +69,14 @@ class HashTableHH : public ITable<std::string, TValue> {
   bool isFull() const noexcept { return _elementCount == _size; }
 };
 
-template<class T>
-bool HashTableHH<T>::isPrime(size_t n) const noexcept {
-  if (n <= 1) return false;
-  if (n <= 3) return true;
-  if (n % 2 == 0 || n % 3 == 0) return false;
-  for (size_t i = 5; i * i <= n; i += 6) {
-    if (n % i == 0 || n % (i + 2) == 0) return false;
+template <class T>
+size_t HashTableHH<T>::gcd(size_t a, size_t b) const noexcept {
+  while (b != 0) {
+    size_t t = b;
+    b = a % b;
+    a = t;
   }
-  return true;
+  return a;
 }
 
 template <class T>
@@ -85,9 +89,8 @@ size_t HashTableHH<T>::h(const std::string& key) const noexcept {
 }
 template <class T>
 HashTableHH<T>::HashTableHH() : _size(100), _elementCount(0) {
-  _shift = 7;
-  for (size_t i = 2; i < _size; i++) {
-    if (isPrime(i)) {
+  for (size_t i = std::max(2, (int)(_size / 15)); i < _size; i++) {
+    if (isMutuallyPrime(i, _size)) {
       _shift = i;
       break;
     }
@@ -97,9 +100,8 @@ HashTableHH<T>::HashTableHH() : _size(100), _elementCount(0) {
 
 template <class T>
 HashTableHH<T>::HashTableHH(size_t size) : _size(size), _elementCount(0) {
-  _shift = 7;
-  for (size_t i = 2; i < _size; i++) {
-    if (isPrime(i)) {
+  for (size_t i = std::max(2, (int)(_size / 15)); i < _size; i++) {
+    if (isMutuallyPrime(i, _size)) {
       _shift = i;
       break;
     }
