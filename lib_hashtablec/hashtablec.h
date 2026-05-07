@@ -37,7 +37,7 @@ class HashTableC : public ITable<std::string, TValue> {
 };
 
 template <class TValue>
-HashTableC<TValue>::HashTableC() : _size(10000), _elementCount(0) {
+HashTableC<TValue>::HashTableC() : _size(100), _elementCount(0) {
   for (size_t i = 0; i < _size; i++) {
     _rows.push_back(List<HashData>());
   }
@@ -50,7 +50,7 @@ HashTableC<TValue>::HashTableC(size_t size) : _size(size), _elementCount(0) {
 }
 
 template <class TValue>
-HashTableC<TValue>::HashTableC(const HashTableC& other) {
+HashTableC<TValue>::HashTableC(const HashTableC& other) : _size(other._size), _elementCount(other._elementCount) {
   for (size_t i = 0; i < other._rows.size(); i++) {
     _rows.push_back(List<HashData>());
     for (auto it = other._rows[i].begin(); it != other._rows[i].end(); ++it) {
