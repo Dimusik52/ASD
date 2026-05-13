@@ -142,40 +142,9 @@ class SkipList {
   NodeSL<TKey, TValue>* find_nearest(
       const TKey& key, TVector<NodeSL<TKey, TValue>*>& update) const noexcept {
     NodeSL<TKey, TValue>* current = nullptr;
+
     for (int level = _lvl; level >= 0; level--) {
       if (current == nullptr) {
-        current = _heads[level];
-      }
-      while (current != nullptr) {
-        if (level < current->_level && current->_next[level] != nullptr &&
-            current->_next[level]->_data.first < key) {
-          current = current->_next[level];
-        } else {
-          break;
-        }
-      }
-
-      if (level < update.size()) {
-        update[level] = current;
-      }
-    }
-    if (current != nullptr) {
-      current = current->_next[0];
-    }
-
-    return current;
-  }
-
-  public:
-  bool find(const TKey& key, TValue& value) const {
-    TVector<NodeSL<TKey, TValue>*> update;
-    for (size_t i = 0; i <= MAX_LVLS; i++) {
-      update.push_back(nullptr);
-    }
-    NodeSL<TKey, TValue>* current = nullptr;
-
-    for (int level = _lvl; level >= 0; level--) {
-      if (current == nullptr && level < _heads.size()) {
         current = _heads[level];
       }
 
@@ -183,20 +152,33 @@ class SkipList {
              current->_next[level]->_data.first < key) {
         current = current->_next[level];
       }
+
+      if (level < update.size()) {
+        update[level] = current;
+      }
     }
 
     if (current != nullptr) {
-      current = current->_next[0];
+      return current->_next[0];
     }
-
-    if (current != nullptr && current->_data.first == key) {
-      value = current->_data.second;
-      return true;
-    }
-    return false;
+    return nullptr;
   }
+
+  public:
+  bool find(const TKey& key, TValue& value) const {
+     TVector<NodeSL<TKey, TValue>*> update;
+     update.resize(MAX_LVLS + 1, nullptr);
+
+     NodeSL<TKey, TValue>* node = find_nearest(key, update);
+     if (node != nullptr && node->_data.first == key) {
+       value = node->_data.second;
+       return true;
+     }
+     return false;
+  }
+
   bool remove(const TKey& key) {
-    TVector<Node<TKey, TValue>*> update;
+    TVector<NodeSL<TKey, TValue>*> update;
     for (size_t i = 0; i <= MAX_LVLS; i++) {
       update.push_back(nullptr);
     }
