@@ -347,8 +347,9 @@ void main() {
   skipList.insert(4, "four");
   skipList.insert(5, "five");
   skipList.insert(2, "two");
-
+  //skipList.remove(2);
   skipList.print();
+  std::cout << skipList.find(7, std::string("seven"));
 }
 
 #endif
