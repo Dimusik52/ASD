@@ -777,8 +777,10 @@ void printLabyrinthWithPath(char* walls, size_t cols, size_t rows,
       } else {
         std::cout << "  ";
       }
-
-      std::cout << ((walls[currIdx] & RIGHT_WALL) ? "|" : " ");
+      std::cout << ((walls[currIdx] & RIGHT_WALL) &&
+                            !(i == rows - 1 && j == cols - 1)
+                        ? "|"
+                        : " ");
 
     }
     std::cout << "\n";
