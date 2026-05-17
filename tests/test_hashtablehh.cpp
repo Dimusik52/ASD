@@ -56,20 +56,21 @@ TEST(HashTableHHTest, EraseElement) {
 TEST(HashTableHHTest, EraseThenFindWithCollision) {
   HashTableHH<int> table(5);
 
-  table.insert("aaa", 111);
-  table.insert("bbb", 222);
-  table.insert("ccc", 333);
+  table.insert("abc", 111);
+  table.insert("cba", 222);
+  table.insert("bac", 333);
 
-  table.erase("bbb");
-  EXPECT_FALSE(table.contains("bbb"));
+  table.erase("cba");
+  EXPECT_FALSE(table.contains("cba"));
 
-  EXPECT_TRUE(table.contains("aaa"));
-  EXPECT_TRUE(table.contains("ccc"));
-  EXPECT_EQ(111, *table.find("aaa"));
-  EXPECT_EQ(333, *table.find("ccc"));
+  EXPECT_TRUE(table.contains("abc"));
+  EXPECT_TRUE(table.contains("bac"));
+  EXPECT_EQ(111, *table.find("abc"));
+  EXPECT_EQ(333, *table.find("bac"));
 
-  table.insert("ddd", 444);
-  EXPECT_TRUE(table.contains("ddd"));
+  table.insert("cba", 444);
+  EXPECT_TRUE(table.contains("cba"));
+  EXPECT_EQ(444, *table.find("cba"));
   EXPECT_EQ(3, table.size());
 }
 
