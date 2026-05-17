@@ -327,7 +327,7 @@ void main() {
   //fillAndPrintHeap();
   //fillAndPrintPriorityQueue();
   //uniteTwoDictsAndPrint();
-  //createAndPrintGraph();
+  createAndPrintGraph();
   //createAndDoDijkstraAlgorithm();
   generateAndPrintPath(4, 4);
 }
