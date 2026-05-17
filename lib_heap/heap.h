@@ -6,9 +6,11 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <tuple>
 template <class TKey, class TValue>
 class Heap {
-  std::vector<std::pair<TKey, TValue>> _data;
+  std::vector<std::tuple<TKey, size_t, TValue>> _data;
+  size_t _counter = 0;
 
   public:
   Heap() = default;
@@ -20,9 +22,9 @@ class Heap {
   std::pair<TKey, TValue> extract();
   void print() const noexcept;
 
-  std::pair<TKey, TValue>& top() const {
+  std::pair<TKey, TValue> top() const {
     if (empty()) throw std::logic_error("Heap is empty!");
-    return _data[0];
+    return {std::get<0>(_data[0]), std::get<2>(_data[0])};
   }
   bool empty() const noexcept { return _data.empty(); }
 
@@ -30,47 +32,50 @@ class Heap {
 };
 template <class TKey, class TValue>
 void Heap<TKey, TValue>::insert(const TKey& key, const TValue& value) noexcept {
-  _data.push_back({key, value});
+  _data.push_back({key, _counter++, value});
   ascend();
 }
 
 template <class TKey, class TValue>
 void Heap<TKey, TValue>::ascend() noexcept {
-  if (_data.empty()) return;
   size_t index = _data.size() - 1;
-
   while (index > 0) {
     size_t parent = (index - 1) / 2;
-    if (_data[parent].first > _data[index].first) {
+    if (std::get<0>(_data[parent]) > std::get<0>(_data[index]) ||
+        (std::get<0>(_data[parent]) == std::get<0>(_data[index]) &&
+         std::get<1>(_data[parent]) > std::get<1>(_data[index]))) {
       std::swap(_data[parent], _data[index]);
       index = parent;
     } else {
       break;
     }
-  } 
+  }
 }
 
 template <class TKey, class TValue>
 std::pair<TKey, TValue> Heap<TKey, TValue>::extract() {
   if (_data.empty()) throw std::logic_error("Heap is empty!");
 
-   std::pair<TKey, TValue> root = _data[0];
+  std::pair<TKey, TValue> result = {std::get<0>(_data[0]),
+                                    std::get<2>(_data[0])};
 
-   _data[0] = _data.back();
-   _data.pop_back();
+  _data[0] = _data.back();
+  _data.pop_back();
 
-   if (!empty()) {
-     descend();
-   }
+  if (!empty()) descend();
 
-   return root;
+  return result;
 }
 
 template <class TKey, class TValue>
 void Heap<TKey, TValue>::print() const noexcept {
-  if (empty()) throw std::logic_error("Heap is empty!");
-  for (size_t i = 0; i < _data.size() - 1; i++) {
-    std::cout << _data[i].first << ":" << _data[i].second << " ";
+  if (empty()) {
+    std::cout << "Heap is empty!\n";
+    return;
+  }
+  for (size_t i = 0; i < _data.size(); i++) {
+    std::cout << std::get<0>(_data[i]) << ":" << std::get<2>(_data[i]);
+    if (i != _data.size() - 1) std::cout << " ";
   }
   std::cout << "\n";
 }
@@ -82,14 +87,22 @@ void Heap<TKey, TValue>::descend() noexcept {
   size_t index = 0;
   size_t size = _data.size();
 
-  while (1) {
+  while (true) {
     size_t left = 2 * index + 1;
     size_t right = 2 * index + 2;
     size_t smallest = index;
-    if (left < size && _data[left].first < _data[smallest].first) {
+
+    auto isBetter = [&](size_t a, size_t b) {
+      TKey keyA = std::get<0>(_data[a]);
+      TKey keyB = std::get<0>(_data[b]);
+      if (keyA != keyB) return keyA < keyB;
+      return std::get<1>(_data[a]) < std::get<1>(_data[b]);
+    };
+
+    if (left < size && isBetter(left, smallest)) {
       smallest = left;
     }
-    if (right < size && _data[right].first < _data[smallest].first) {
+    if (right < size && isBetter(right, smallest)) {
       smallest = right;
     }
 
