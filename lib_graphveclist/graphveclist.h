@@ -11,16 +11,16 @@
 template <class T>
 class GraphVecList {
   struct Edge {
-    T to;
+    const T* to;
     int weight;
 
-    Edge(const T& to, int w = 1) : to(to), weight(w) {}
+    Edge(const T& to, int w = 1) : to(&to), weight(w) {}
 
-    bool operator==(const Edge& other) const {
+    /*bool operator==(const Edge& other) const {
       return to == other.to && weight == other.weight;
     }
 
-    bool operator==(const T& vertexName) const { return to == vertexName; }
+    bool operator==(const T& vertexName) const { return to == vertexName; }*/
   };
 
   struct Vertex {
@@ -75,16 +75,21 @@ class GraphVecList {
 };
 
 template <class T>
-GraphVecList<T>::GraphVecList() : _isOriented(false), _isWeighted(true) {}
+GraphVecList<T>::GraphVecList() : _isOriented(false), _isWeighted(true) {
+  _data.reserve(100000);
+}
 
 template <class T>
 GraphVecList<T>::GraphVecList(bool isOriented, bool isWeighted)
-    : _isOriented(isOriented), _isWeighted(isWeighted) {}
+    : _isOriented(isOriented), _isWeighted(isWeighted) {
+  _data.reserve(100000);
+}
 
 template <class T>
 GraphVecList<T>::GraphVecList(std::vector<std::tuple<T, T, int>> edges,
                               bool isOriented)
     : _isOriented(isOriented), _isWeighted(true) {
+  _data.reserve(100000);
   for (const auto& edge : edges) {
     const T& from = std::get<0>(edge);
     const T& to = std::get<1>(edge);
@@ -109,6 +114,7 @@ template <class T>
 GraphVecList<T>::GraphVecList(std::vector<std::pair<T, T>> edges,
                               bool isOriented, bool isWeighted)
     : _isOriented(isOriented), _isWeighted(isWeighted) {
+  _data.reserve(100000);
   for (const auto& edge : edges) {
     if (!vertexExists(edge.first)) {
       _data.emplace_back(edge.first);
@@ -136,7 +142,7 @@ int GraphVecList<T>::findVertexPosition(const T& name) const {
 template <class T>
 void GraphVecList<T>::addVertex(const T& name) {
   if (!vertexExists(name)) {
-    _data.emplace_back(name);
+    _data.push_back(name);
   }
 }
 
@@ -146,7 +152,7 @@ void GraphVecList<T>::deleteVertex(const T& name) {
   if (pos == -1) return;
   for (auto& vertex : _data) {
     for (auto it = vertex.edges.begin(); it != vertex.edges.end(); ++it) {
-      if ((*it).to == name) {
+      if (*((*it).to) == name) {
         vertex.edges.erase(it.get_node());
         break;
       }
@@ -175,10 +181,10 @@ void GraphVecList<T>::addEdge(const T& from, const T& to, int weight) {
     throw std::runtime_error("Edge already exists");
   }
 
-  _data[fromPos].edges.push_back(Edge(to, weight));
+  _data[fromPos].edges.push_back(Edge(_data[toPos].name, weight));
 
   if (!_isOriented) {
-    _data[toPos].edges.push_back(Edge(from, weight));
+    _data[toPos].edges.push_back(Edge(_data[fromPos].name, weight));
   }
 }
 
@@ -236,7 +242,7 @@ void GraphVecList<T>::updateWeight(const T& from, const T& to, int newWeight) {
     if (toPos != -1) {
       auto& toEdges = _data[toPos].edges;
       for (auto it = toEdges.begin(); it != toEdges.end(); ++it) {
-        if ((*it).to == from) {
+        if (*((*it).to) == from) {
           (*it).weight = newWeight;
           break;
         }
@@ -252,7 +258,7 @@ bool GraphVecList<T>::edgeExists(const T& from, const T& to) const {
 
   const auto& edges = _data[fromPos].edges;
   for (auto it = edges.begin(); it != edges.end(); ++it) {
-    if ((*it).to == to) {
+    if (*((*it).to)== to) {
       return true;
     }
   }
@@ -296,7 +302,7 @@ std::vector<std::pair<T, int>> GraphVecList<T>::getNeighbors(
 
   const auto& edges = _data[pos].edges;
   for (auto it = edges.begin(); it != edges.end(); ++it) {
-    neighbors.push_back({(*it).to, (*it).weight});
+    neighbors.push_back({*(it->to), (*it).weight});
   }
   return neighbors;
 }
@@ -323,7 +329,7 @@ void GraphVecList<T>::printGraph() const {
     bool first = true;
     for (auto it = vertex.edges.begin(); it != vertex.edges.end(); ++it) {
       if (!first) std::cout << ", ";
-      std::cout << (*it).to;
+      std::cout << *((*it).to);
       if (_isWeighted) {
         std::cout << "(" << (*it).weight << ")";
       }
