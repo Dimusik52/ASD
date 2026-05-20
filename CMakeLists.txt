@@ -39,8 +39,13 @@ add_subdirectory(lib_heap)
 add_subdirectory(lib_prqueue)
 add_subdirectory(lib_hashtablec)
 add_subdirectory(lib_graphveclist)
+add_subdirectory(lib_graphedgelist)
 add_subdirectory(lib_hashtablehh)
 add_subdirectory(lib_algorithms)
+add_subdirectory(lib_tree)
+add_subdirectory(lib_treetable)
+add_subdirectory(lib_bsttable)
+
 
 
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main
