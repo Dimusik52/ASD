@@ -19,6 +19,7 @@
 #include "../lib_prqueue/prqueue.h"
 #include "../lib_hashtablec/hashtablec.h"
 #include "../lib_graphveclist/graphveclist.h"
+#include "../lib_graphedgelist/graphedgelist.h"
 
 template <class T>
 class List;
@@ -546,6 +547,21 @@ void uniteTwoDictsAndPrint() {
 
 void createAndPrintGraph() {
   GraphVecList<int> graph(false, true);
+  graph.addEdge(0, 3);
+  graph.addEdge(0, 5);
+  graph.addEdge(1, 2);
+  graph.addEdge(1, 4);
+  graph.addEdge(2, 3);
+  graph.addEdge(2, 4);
+  graph.addEdge(2, 5);
+  graph.addEdge(3, 6);
+  graph.addEdge(4, 6);
+
+  graph.printGraph();
+}
+
+void createAndPrintGraphEdge() {
+  GraphEdgeList<int> graph(false, true);
   graph.addEdge(0, 3);
   graph.addEdge(0, 5);
   graph.addEdge(1, 2);
