@@ -1,5 +1,4 @@
-// Copyright (c) 2025 Dmitriy Pikhulya 3824B1PR2
-
+// Copyright (c) 2026 Dmitriy Pikhulya 3824B1PR2
 #ifndef _LIB_TREE_TREE_H_
 #define _LIB_TREE_TREE_H_
 
@@ -18,33 +17,70 @@ class Tree {
   };
 
   Node* _root;
+  size_t _size;
 
-  void print_DCLR_rec_helper(Node* node) const;
-  void print_DLRC_rec_helper(Node* node) const;
-  void print_DLCK_rec_helper(Node* node) const;
+  void print_DCLR_rec_helper(Node* node, std::ostream& out) const;
+  void print_DLRC_rec_helper(Node* node, std::ostream& out) const;
+  void print_DLCK_rec_helper(Node* node, std::ostream& out) const;
   void delete_tree(Node* node);
-
-  Node* find_node(const TKey& key, Node*& parent) noexcept;
-  Node* get_deepest_rightmost_node(Node*& parent) noexcept;
+  void copyTree(Node*& dest, Node* src);
+  Node* find_node(const TKey& key) const noexcept;
+  Node* find_node_with_parent(const TKey& key, Node*& parent) const noexcept;
+  Node* get_deepest_rightmost_node(Node*& parent) const noexcept;
 
  public:
   Tree();
+  Tree(const Tree& other);
+  Tree& operator=(const Tree& other);
   ~Tree();
 
   void insert(const TKey& key, const TVal& val);
   TVal* find(const TKey& key) noexcept;
-  void erase(const TKey& key);
+  bool erase(const TKey& key) noexcept;
+  void clear() noexcept;
 
-  void print_w() const noexcept;
-  void print_DLCK() const noexcept;
-  void print_DLRC() const noexcept;
-  void print_DCLR_rec() const noexcept;
+  void print_w(std::ostream& out = std::cout) const noexcept;
+  void print_DLCK(std::ostream& out = std::cout) const noexcept;
+  void print_DLRC(std::ostream& out = std::cout) const noexcept;
+  void print_DCLR_rec(std::ostream& out = std::cout) const noexcept;
 
   bool is_empty() const { return _root == nullptr; }
+  size_t size() const noexcept { return _size; }
+  bool contains(const TKey& key) const noexcept {
+    return find_node(key) != nullptr;
+  }
 };
 
 template <typename TKey, typename TVal>
-Tree<TKey, TVal>::Tree() : _root(nullptr) {}
+Tree<TKey, TVal>::Tree() : _root(nullptr), _size(0) {}
+
+template <typename TKey, typename TVal>
+Tree<TKey, TVal>::Tree(const Tree& other) : _root(nullptr), _size(0) {
+  copyTree(_root, other._root);
+}
+
+template <typename TKey, typename TVal>
+Tree<TKey, TVal>& Tree<TKey, TVal>::operator=(const Tree& other) {
+  if (this != &other) {
+    delete_tree(_root);
+    _root = nullptr;
+    _size = 0;
+    copyTree(_root, other._root);
+  }
+  return *this;
+}
+
+template <typename TKey, typename TVal>
+void Tree<TKey, TVal>::copyTree(Node*& dest, Node* src) {
+  if (src == nullptr) {
+    dest = nullptr;
+    return;
+  }
+  dest = new Node(src->data.first, src->data.second);
+  copyTree(dest->left, src->left);
+  copyTree(dest->right, src->right);
+  _size++;
+}
 
 template <typename TKey, typename TVal>
 Tree<TKey, TVal>::~Tree() {
@@ -60,36 +96,7 @@ void Tree<TKey, TVal>::delete_tree(Node* node) {
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::insert(const TKey& key, const TVal& val) {
-  Node* node = new Node(key, val);
-
-  if (is_empty()) {
-    _root = node;
-    return;
-  }
-
-  std::queue<Node*> q;
-  q.push(_root);
-
-  while (!q.empty()) {
-    Node* cur = q.front();
-    q.pop();
-
-    if (!cur->left) {
-      cur->left = node;
-      return;
-    }
-    if (!cur->right) {
-      cur->right = node;
-      return;
-    }
-    q.push(cur->left);
-    q.push(cur->right);
-  }
-}
-
-template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::print_w() const noexcept {
+void Tree<TKey, TVal>::print_w(std::ostream& out) const noexcept {
   /*
           1(A)
         /     \
@@ -107,25 +114,26 @@ void Tree<TKey, TVal>::print_w() const noexcept {
     Node* cur = q.front();
     q.pop();
 
-    std::cout << cur->data.second << " ";
+    out << cur->data.second << " ";
 
     if (cur->left) q.push(cur->left);
     if (cur->right) q.push(cur->right);
   }
-  std::cout << std::endl;
+  out << std::endl;
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::print_DCLR_rec_helper(Node* node) const {
+void Tree<TKey, TVal>::print_DCLR_rec_helper(Node* node,
+                                             std::ostream& out) const {
   if (node == nullptr) return;
 
-  std::cout << node->data.second << " ";
-  print_DCLR_rec_helper(node->left);
-  print_DCLR_rec_helper(node->right);
+  out << node->data.second << " ";
+  print_DCLR_rec_helper(node->left, out);
+  print_DCLR_rec_helper(node->right, out);
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::print_DCLR_rec() const noexcept {
+void Tree<TKey, TVal>::print_DCLR_rec(std::ostream& out) const noexcept {
   /*
         1(A)
       /     \
@@ -134,21 +142,22 @@ void Tree<TKey, TVal>::print_DCLR_rec() const noexcept {
     4(D)  5(E)   6(F)
 
 */
-  print_DCLR_rec_helper(_root);
-  std::cout << std::endl;
+  print_DCLR_rec_helper(_root, out);
+  out << std::endl;
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::print_DLRC_rec_helper(Node* node) const {
+void Tree<TKey, TVal>::print_DLRC_rec_helper(Node* node,
+                                             std::ostream& out) const {
   if (node == nullptr) return;
 
-  print_DLRC_rec_helper(node->left);
-  print_DLRC_rec_helper(node->right);
-  std::cout << node->data.second << " ";
+  print_DLRC_rec_helper(node->left, out);
+  print_DLRC_rec_helper(node->right, out);
+  out << node->data.second << " ";
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::print_DLRC() const noexcept {
+void Tree<TKey, TVal>::print_DLRC(std::ostream& out) const noexcept {
   /*
         1(A)
       /     \
@@ -157,21 +166,22 @@ void Tree<TKey, TVal>::print_DLRC() const noexcept {
     4(D)  5(E)   6(F)
 
 */
-  print_DLRC_rec_helper(_root);
-  std::cout << std::endl;
+  print_DLRC_rec_helper(_root, out);
+  out << std::endl;
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::print_DLCK_rec_helper(Node* node) const {
+void Tree<TKey, TVal>::print_DLCK_rec_helper(Node* node,
+                                             std::ostream& out) const {
   if (node == nullptr) return;
 
-  print_DLCK_rec_helper(node->left);
-  std::cout << node->data.second << " ";
-  print_DLCK_rec_helper(node->right);
+  print_DLCK_rec_helper(node->left, out);
+  out << node->data.second << " ";
+  print_DLCK_rec_helper(node->right, out);
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::print_DLCK() const noexcept {
+void Tree<TKey, TVal>::print_DLCK(std::ostream& out) const noexcept {
   /*
         1(A)
       /     \
@@ -180,12 +190,13 @@ void Tree<TKey, TVal>::print_DLCK() const noexcept {
     4(D)  5(E)   6(F)
 
 */
-  print_DLCK_rec_helper(_root);
-  std::cout << std::endl;
+  print_DLCK_rec_helper(_root, out);
+  out << std::endl;
 }
 
 template <typename TKey, typename TVal>
-TVal* Tree<TKey, TVal>::find(const TKey& key) noexcept {
+typename Tree<TKey, TVal>::Node* Tree<TKey, TVal>::find_node(
+    const TKey& key) const noexcept {
   if (is_empty()) return nullptr;
 
   std::queue<Node*> q;
@@ -196,7 +207,7 @@ TVal* Tree<TKey, TVal>::find(const TKey& key) noexcept {
     q.pop();
 
     if (cur->data.first == key) {
-      return &(cur->data.second);
+      return cur;
     }
 
     if (cur->left) q.push(cur->left);
@@ -206,8 +217,8 @@ TVal* Tree<TKey, TVal>::find(const TKey& key) noexcept {
 }
 
 template <typename TKey, typename TVal>
-typename Tree<TKey, TVal>::Node* Tree<TKey, TVal>::find_node(
-    const TKey& key, Node*& parent) noexcept {
+typename Tree<TKey, TVal>::Node* Tree<TKey, TVal>::find_node_with_parent(
+    const TKey& key, Node*& parent) const noexcept {
   if (is_empty()) return nullptr;
 
   std::queue<std::pair<Node*, Node*>> q;
@@ -230,7 +241,7 @@ typename Tree<TKey, TVal>::Node* Tree<TKey, TVal>::find_node(
 
 template <typename TKey, typename TVal>
 typename Tree<TKey, TVal>::Node* Tree<TKey, TVal>::get_deepest_rightmost_node(
-    Node*& parent) noexcept {
+    Node*& parent) const noexcept {
   if (is_empty()) return nullptr;
 
   std::queue<std::pair<Node*, Node*>> q;
@@ -254,13 +265,60 @@ typename Tree<TKey, TVal>::Node* Tree<TKey, TVal>::get_deepest_rightmost_node(
 }
 
 template <typename TKey, typename TVal>
-void Tree<TKey, TVal>::erase(const TKey& key) {
-  if (is_empty()) return;
+void Tree<TKey, TVal>::insert(const TKey& key, const TVal& val) {
+  Node* existing = find_node(key);
+  if (existing != nullptr) {
+    existing->data.second = val;
+    return;
+  }
+
+  Node* node = new Node(key, val);
+
+  if (is_empty()) {
+    _root = node;
+    _size++;
+    return;
+  }
+
+  std::queue<Node*> q;
+  q.push(_root);
+
+  while (!q.empty()) {
+    Node* cur = q.front();
+    q.pop();
+
+    if (!cur->left) {
+      cur->left = node;
+      _size++;
+      return;
+    }
+    if (!cur->right) {
+      cur->right = node;
+      _size++;
+      return;
+    }
+    q.push(cur->left);
+    q.push(cur->right);
+  }
+}
+
+template <typename TKey, typename TVal>
+TVal* Tree<TKey, TVal>::find(const TKey& key) noexcept {
+  Node* node = find_node(key);
+  if (node != nullptr) {
+    return &(node->data.second);
+  }
+  return nullptr;
+}
+
+template <typename TKey, typename TVal>
+bool Tree<TKey, TVal>::erase(const TKey& key) noexcept {
+  if (is_empty()) return false;
 
   Node* parent = nullptr;
-  Node* target = find_node(key, parent);
+  Node* target = find_node_with_parent(key, parent);
 
-  if (target == nullptr) return;
+  if (target == nullptr) return false;
 
   // Случай 1: удаляемый узел - лист
   if (target->left == nullptr && target->right == nullptr) {
@@ -274,7 +332,8 @@ void Tree<TKey, TVal>::erase(const TKey& key) {
         parent->right = nullptr;
       delete target;
     }
-    return;
+    _size--;
+    return true;
   }
 
   // Случай 2: узел имеет хотя бы одного ребенка
@@ -294,7 +353,8 @@ void Tree<TKey, TVal>::erase(const TKey& key) {
         parent->right = child;
       delete target;
     }
-    return;
+    _size--;
+    return true;
   }
 
   // Копируем данные из deepest в target
@@ -308,6 +368,15 @@ void Tree<TKey, TVal>::erase(const TKey& key) {
       parent_of_deepest->right = nullptr;
   }
   delete deepest;
+  _size--;
+  return true;
+}
+
+template <typename TKey, typename TVal>
+void Tree<TKey, TVal>::clear() noexcept {
+  delete_tree(_root);
+  _root = nullptr;
+  _size = 0;
 }
 
 #endif  // _LIB_TREE_TREE_H_
