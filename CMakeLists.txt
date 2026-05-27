@@ -45,6 +45,8 @@ add_subdirectory(lib_algorithms)
 add_subdirectory(lib_tree)
 add_subdirectory(lib_treetable)
 add_subdirectory(lib_bsttable)
+add_subdirectory(lib_avltree)
+add_subdirectory(lib_avltreetable)
 
 
 
