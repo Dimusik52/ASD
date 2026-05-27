@@ -270,3 +270,57 @@ TEST(BSTreeTableTest, UpdateAfterErase) {
   EXPECT_EQ(*table.find(1), "ONE");
   EXPECT_EQ(table.size(), 2);
 }
+
+TEST(BSTreeTableTest, PrintSortedEmptyTree) {
+  BSTreeTable<int, std::string> table;
+  std::stringstream ss;
+
+  table.printSorted(ss);
+  EXPECT_EQ(ss.str(), "Tree is empty!\n");
+}
+
+TEST(BSTreeTableTest, PrintSortedSingleElement) {
+  BSTreeTable<int, std::string> table;
+  table.insert(42, "answer");
+
+  std::stringstream ss;
+  table.printSorted(ss);
+  EXPECT_EQ(ss.str(), "42:answer \n");
+}
+
+TEST(BSTreeTableTest, PrintSortedMultipleElements) {
+  BSTreeTable<int, std::string> table;
+  table.insert(5, "five");
+  table.insert(3, "three");
+  table.insert(7, "seven");
+  table.insert(1, "one");
+  table.insert(4, "four");
+
+  std::stringstream ss;
+  table.printSorted(ss);
+  EXPECT_EQ(ss.str(), "1:one 3:three 4:four 5:five 7:seven \n");
+}
+
+TEST(BSTreeTableTest, PrintSortedAfterDeletion) {
+  BSTreeTable<int, std::string> table;
+  table.insert(5, "five");
+  table.insert(3, "three");
+  table.insert(7, "seven");
+  table.insert(1, "one");
+  table.insert(4, "four");
+
+  table.erase(3);
+
+  std::stringstream ss;
+  table.printSorted(ss);
+  EXPECT_EQ(ss.str(), "1:one 4:four 5:five 7:seven \n");
+}
+
+TEST(BSTreeTableTest, ToStringSorted) {
+  BSTreeTable<int, std::string> table;
+  table.insert(5, "five");
+  table.insert(3, "three");
+  table.insert(7, "seven");
+
+  EXPECT_EQ(table.toStringSorted(), "3:three 5:five 7:seven \n");
+}
