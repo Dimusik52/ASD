@@ -28,6 +28,7 @@ class BSTree {
   Node* eraseRecursive(Node* node, const TKey& key, bool& deleted) noexcept;
   void printSimple(Node* node, int level,
                    std::ostream& out) const noexcept;
+  void printSortedRecursive(Node* node, std::ostream& out) const noexcept;
 
  public:
   BSTree() : _root(nullptr), _size(0){};
@@ -43,6 +44,8 @@ class BSTree {
   void clear() noexcept;
 
   void print(std::ostream& out = std::cout) const noexcept;
+  void printSorted(std::ostream& out = std::cout) const noexcept;
+  std::string toStringSorted() const noexcept;
 };
 
 template <class TKey, class TValue>
@@ -235,6 +238,33 @@ void BSTree<TKey, TValue>::printSimple(Node* node, int level,
   out << node->data.first << ":" << node->data.second << std::endl;
 
   printSimple(node->left, level + 1, out);
+}
+
+template <class TKey, class TValue>
+void BSTree<TKey, TValue>::printSortedRecursive(
+    Node* node, std::ostream& out) const noexcept {
+  if (node == nullptr) return;
+
+  printSortedRecursive(node->left, out);
+  out << node->data.first << ":" << node->data.second << " ";
+  printSortedRecursive(node->right, out);
+}
+
+template <class TKey, class TValue>
+void BSTree<TKey, TValue>::printSorted(std::ostream& out) const noexcept {
+  if (isEmpty()) {
+    out << "Tree is empty!" << std::endl;
+    return;
+  }
+  printSortedRecursive(_root, out);
+  out << std::endl;
+}
+
+template <class TKey, class TValue>
+std::string BSTree<TKey, TValue>::toStringSorted() const noexcept {
+  std::stringstream ss;
+  printSorted(ss);
+  return ss.str();
 }
 
 #endif  // LIB_BINARYTREE_BINARYTREE_H_

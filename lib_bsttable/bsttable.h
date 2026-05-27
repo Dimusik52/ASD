@@ -36,6 +36,12 @@ class BSTreeTable : public ITable<TKey, TValue> {
 
   void print(std::ostream& out) const override { _tree.print(out); }
 
+  void printSorted(std::ostream& out = std::cout) const {
+    _tree.printSorted(out);
+  }
+
+  std::string toStringSorted() const { return _tree.toStringSorted(); }
+
   void clear() noexcept { _tree.clear(); }
 };
 
