@@ -47,6 +47,8 @@ add_subdirectory(lib_treetable)
 add_subdirectory(lib_bsttable)
 add_subdirectory(lib_avltree)
 add_subdirectory(lib_avltreetable)
+add_subdirectory(lib_rbtree)
+add_subdirectory(lib_rbtreetable)
 
 
 
