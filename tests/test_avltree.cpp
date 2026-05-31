@@ -263,11 +263,13 @@ TEST(AVLTreeTest, EraseLeafNode) {
   EXPECT_FALSE(tree.contains(3));
   EXPECT_TRUE(tree.contains(5));
   EXPECT_TRUE(tree.contains(7));
+  EXPECT_TRUE(tree.isBalanced());
 
   tree.erase(7);
   EXPECT_EQ(tree.size(), 1);
   EXPECT_FALSE(tree.contains(7));
   EXPECT_TRUE(tree.contains(5));
+  EXPECT_TRUE(tree.isBalanced());
 }
 
 TEST(AVLTreeTest, EraseNodeWithOneChild) {
@@ -282,6 +284,7 @@ TEST(AVLTreeTest, EraseNodeWithOneChild) {
   EXPECT_FALSE(tree.contains(3));
   EXPECT_TRUE(tree.contains(5));
   EXPECT_TRUE(tree.contains(2));
+  EXPECT_TRUE(tree.isBalanced());
 }
 
 TEST(AVLTreeTest, EraseNodeWithTwoChildren) {
@@ -305,6 +308,8 @@ TEST(AVLTreeTest, EraseNodeWithTwoChildren) {
   EXPECT_TRUE(tree.contains(4));
   EXPECT_TRUE(tree.contains(6));
   EXPECT_TRUE(tree.contains(8));
+
+  EXPECT_TRUE(tree.isBalanced());
 }
 
 TEST(AVLTreeTest, EraseRootWithNoChildren) {
@@ -329,6 +334,7 @@ TEST(AVLTreeTest, EraseRootWithOneChild) {
   EXPECT_EQ(tree.size(), 1);
   EXPECT_TRUE(tree.contains(3));
   EXPECT_FALSE(tree.contains(5));
+  EXPECT_TRUE(tree.isBalanced());
 }
 
 TEST(AVLTreeTest, EraseNonExistentKey) {
@@ -341,6 +347,7 @@ TEST(AVLTreeTest, EraseNonExistentKey) {
   EXPECT_EQ(tree.size(), 2);
   EXPECT_TRUE(tree.contains(10));
   EXPECT_TRUE(tree.contains(20));
+  EXPECT_TRUE(tree.isBalanced());
 }
 
 TEST(AVLTreeTest, EraseFromEmptyTree) {
@@ -368,6 +375,7 @@ TEST(AVLTreeTest, BalanceAfterEraseCausingLL) {
   EXPECT_TRUE(tree.contains(30));
   EXPECT_TRUE(tree.contains(20));
   EXPECT_TRUE(tree.contains(10));
+  EXPECT_TRUE(tree.isBalanced());
 }
 
 TEST(AVLTreeTest, BalanceAfterEraseCausingRR) {
@@ -387,6 +395,7 @@ TEST(AVLTreeTest, BalanceAfterEraseCausingRR) {
   EXPECT_TRUE(tree.contains(70));
   EXPECT_TRUE(tree.contains(80));
   EXPECT_TRUE(tree.contains(90));
+  EXPECT_TRUE(tree.isBalanced());
 }
 
 TEST(AVLTreeTest, CopyConstructor) {
