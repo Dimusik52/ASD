@@ -516,3 +516,111 @@ TEST(AVLTreeTest, PrintSortedNonEmpty) {
   tree.printSorted(ss);
   EXPECT_EQ(ss.str(), "1:one 2:two 3:three \n");
 }
+
+TEST(AVLTreeTest, DoubleRotation) { 
+  AVLTree<int, std::string> tree;
+  tree.insert(50, "50");
+  tree.insert(40, "40");
+  tree.insert(52, "52");
+  tree.insert(30, "30");
+  tree.insert(45, "45");
+  tree.insert(51, "51");
+  tree.insert(53, "53");
+  tree.insert(20, "20");
+  tree.insert(35, "35");
+  tree.insert(44, "44");
+  tree.insert(46, "46");
+  tree.insert(10, "10");
+
+  /*
+            45 (h=4)
+          /    \
+        40      50 (h=3)
+       /  \    /  \
+      30  44  46  52 (h=2)
+     /  \         /  \
+    20  35       51  53 (h=1)
+   /
+  10
+  
+  */
+
+  /*
+          45
+        /    \
+       40     50
+      / \    / \
+     30 44  46 52
+    / \        / \
+   20 35      51 53
+
+  */
+
+  EXPECT_TRUE(tree.isBalanced());
+  EXPECT_EQ(tree.getTreeHeight(), 4);
+}
+
+TEST(AVLTreeTest, DoubleRotationWithDelete) {
+  AVLTree<int, std::string> tree;
+  tree.insert(50, "50");
+  tree.insert(40, "40");
+  tree.insert(60, "60");
+  tree.insert(30, "30");
+  tree.insert(45, "45");
+  tree.insert(55, "55");
+  tree.insert(70, "70");
+  tree.insert(20, "20");
+  tree.insert(54, "54");
+  tree.insert(56, "56");
+  tree.insert(75, "57");
+  tree.insert(90, "90");
+  tree.insert(100, "100");
+  /*
+           50
+         /    \
+       40      60
+      /  \    /  \
+     30  45  55   70
+    /        / \  / \
+   20       54 56 75 90
+                      \
+                      100
+  */
+  tree.erase(45);
+  /*
+           50
+         /    \
+       40      60
+      /       /  \
+     30      55   70
+    /       / \  / \
+   20      54 56 75 90
+                     \
+                     100
+
+  */
+
+  /*
+           60 (h=4)
+         /    \
+       50      75 (h=3)
+      /  \    /  \
+     30  55  70  90 (h=2)
+    /  \  / \      \
+   20  40 54 56    100 (h=1)
+  */
+
+  /*
+  
+    Удаление 45
+    |
+    LL поворот (40) 
+    |
+    RL поворот (50)
+    |
+    Сбалансированное дерево (корень 60)
+  */
+
+  EXPECT_TRUE(tree.isBalanced());
+  EXPECT_EQ(tree.getTreeHeight(), 4);
+}
