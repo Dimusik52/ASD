@@ -273,9 +273,9 @@ void RBTree<TKey, TVal>::recoverBalance(Node* node) {
     if (G->right == P && P->right == C) {
       // RR случай: левый поворот
       /*
-          [G]                  (P)
+          [G]                  [P]
          /   \                /   \
-       [U]   (P)            [G]   (C)
+       [U]   (P)            (G)   (C)
               \            /
               (C)        [U]
       */
@@ -287,11 +287,11 @@ void RBTree<TKey, TVal>::recoverBalance(Node* node) {
     } else if (G->right == P && P->left == C) {
       // RL случай: правый + левый поворот
       /*
-         [G]                  (C)
+         [G]                  [C]
         /   \                /   \
-      [U]   (P)            [G]   (P)
-            /                    /
-          (C)                  [U]
+      [U]   (P)            (G)   (P)
+            /              /
+          (C)            [U]
       */
       rightRotate(P);
       leftRotate(G);
@@ -302,9 +302,9 @@ void RBTree<TKey, TVal>::recoverBalance(Node* node) {
     } else if (G->left == P && P->left == C) {
       // LL случай: правый поворот
       /*
-           [G]                  (P)
+           [G]                  [P]
           /   \                /   \
-        (P)   [U]            (C)   [G]
+        (P)   [U]            (C)   (G)
         /                           \
       (C)                            [U]
       */
@@ -316,9 +316,9 @@ void RBTree<TKey, TVal>::recoverBalance(Node* node) {
     } else if (G->left == P && P->right == C) {
       // LR случай: левый + правый поворот
       /*
-           [G]                  (C)
+           [G]                  [C]
           /   \                /   \
-        (P)   [U]            (P)   [G]
+        (P)   [U]            (P)   (G)
           \                        \
           (C)                      [U]
       */
